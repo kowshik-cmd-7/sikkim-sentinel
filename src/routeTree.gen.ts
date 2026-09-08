@@ -16,7 +16,10 @@ import { Route as HistoricalRouteImport } from './routes/historical'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as RainfallRouteImport } from './routes/rainfall'
 import { Route as ReportRouteImport } from './routes/report'
+import { Route as AdminAlertsRouteImport } from './routes/admin.alerts'
 import { Route as AlertsIndexRouteImport } from './routes/alerts.index'
+import { Route as AlertsAlertIdRouteImport } from './routes/alerts.$alertId'
+import { Route as AlertsPreferencesRouteImport } from './routes/alerts.preferences'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -53,9 +56,24 @@ const ReportRoute = ReportRouteImport.update({
   path: '/report',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminAlertsRoute = AdminAlertsRouteImport.update({
+  id: '/admin/alerts',
+  path: '/admin/alerts',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AlertsIndexRoute = AlertsIndexRouteImport.update({
   id: '/alerts/',
   path: '/alerts/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AlertsAlertIdRoute = AlertsAlertIdRouteImport.update({
+  id: '/alerts/$alertId',
+  path: '/alerts/$alertId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AlertsPreferencesRoute = AlertsPreferencesRouteImport.update({
+  id: '/alerts/preferences',
+  path: '/alerts/preferences',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -67,6 +85,9 @@ export interface FileRoutesByFullPath {
   '/map': typeof MapRoute
   '/rainfall': typeof RainfallRoute
   '/report': typeof ReportRoute
+  '/admin/alerts': typeof AdminAlertsRoute
+  '/alerts/$alertId': typeof AlertsAlertIdRoute
+  '/alerts/preferences': typeof AlertsPreferencesRoute
   '/alerts/': typeof AlertsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -77,6 +98,9 @@ export interface FileRoutesByTo {
   '/map': typeof MapRoute
   '/rainfall': typeof RainfallRoute
   '/report': typeof ReportRoute
+  '/admin/alerts': typeof AdminAlertsRoute
+  '/alerts/$alertId': typeof AlertsAlertIdRoute
+  '/alerts/preferences': typeof AlertsPreferencesRoute
   '/alerts': typeof AlertsIndexRoute
 }
 export interface FileRoutesById {
@@ -88,6 +112,9 @@ export interface FileRoutesById {
   '/map': typeof MapRoute
   '/rainfall': typeof RainfallRoute
   '/report': typeof ReportRoute
+  '/admin/alerts': typeof AdminAlertsRoute
+  '/alerts/$alertId': typeof AlertsAlertIdRoute
+  '/alerts/preferences': typeof AlertsPreferencesRoute
   '/alerts/': typeof AlertsIndexRoute
 }
 export interface FileRouteTypes {
@@ -100,6 +127,9 @@ export interface FileRouteTypes {
     | '/map'
     | '/rainfall'
     | '/report'
+    | '/admin/alerts'
+    | '/alerts/$alertId'
+    | '/alerts/preferences'
     | '/alerts/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -110,6 +140,9 @@ export interface FileRouteTypes {
     | '/map'
     | '/rainfall'
     | '/report'
+    | '/admin/alerts'
+    | '/alerts/$alertId'
+    | '/alerts/preferences'
     | '/alerts'
   id:
     | '__root__'
@@ -120,6 +153,9 @@ export interface FileRouteTypes {
     | '/map'
     | '/rainfall'
     | '/report'
+    | '/admin/alerts'
+    | '/alerts/$alertId'
+    | '/alerts/preferences'
     | '/alerts/'
   fileRoutesById: FileRoutesById
 }
@@ -131,6 +167,9 @@ export interface RootRouteChildren {
   MapRoute: typeof MapRoute
   RainfallRoute: typeof RainfallRoute
   ReportRoute: typeof ReportRoute
+  AdminAlertsRoute: typeof AdminAlertsRoute
+  AlertsAlertIdRoute: typeof AlertsAlertIdRoute
+  AlertsPreferencesRoute: typeof AlertsPreferencesRoute
   AlertsIndexRoute: typeof AlertsIndexRoute
 }
 
@@ -185,11 +224,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReportRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/alerts': {
+      id: '/admin/alerts'
+      path: '/admin/alerts'
+      fullPath: '/admin/alerts'
+      preLoaderRoute: typeof AdminAlertsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/alerts/': {
       id: '/alerts/'
       path: '/alerts'
       fullPath: '/alerts/'
       preLoaderRoute: typeof AlertsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/alerts/$alertId': {
+      id: '/alerts/$alertId'
+      path: '/alerts/$alertId'
+      fullPath: '/alerts/$alertId'
+      preLoaderRoute: typeof AlertsAlertIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/alerts/preferences': {
+      id: '/alerts/preferences'
+      path: '/alerts/preferences'
+      fullPath: '/alerts/preferences'
+      preLoaderRoute: typeof AlertsPreferencesRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -203,6 +263,9 @@ const rootRouteChildren: RootRouteChildren = {
   MapRoute: MapRoute,
   RainfallRoute: RainfallRoute,
   ReportRoute: ReportRoute,
+  AdminAlertsRoute: AdminAlertsRoute,
+  AlertsAlertIdRoute: AlertsAlertIdRoute,
+  AlertsPreferencesRoute: AlertsPreferencesRoute,
   AlertsIndexRoute: AlertsIndexRoute,
 }
 export const routeTree = rootRouteImport
