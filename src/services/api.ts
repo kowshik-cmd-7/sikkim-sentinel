@@ -79,7 +79,7 @@ export const api = {
     const nearest = DISTRICTS.map((d) => ({
       d,
       km: haversineKm([lat, lng], [d.lat, d.lng]),
-    })).sort((a, b) => a.km - b.km)[0];
+    })).sort((a, b) => a.km - b.km)[0]!;
 
     const nearbyEvents = HISTORICAL_EVENTS.filter(
       (e) => haversineKm([lat, lng], [e.lat, e.lng]) < 20,
@@ -87,7 +87,7 @@ export const api = {
 
     const rain = RAINFALL_SERIES.filter((r) => r.district === nearest.d.name).slice(-7);
     const rain7 = rain.reduce((s, r) => s + r.rainfallMm, 0);
-    const soil = rain.length ? rain[rain.length - 1].soilMoisturePct : 50;
+    const soil = rain.length ? rain[rain.length - 1]!.soilMoisturePct : 50;
     const slopeProxy = Math.min(100, 30 + Math.abs(lat - 27.3) * 400);
     const historyProxy = Math.min(100, nearbyEvents.length * 22);
 

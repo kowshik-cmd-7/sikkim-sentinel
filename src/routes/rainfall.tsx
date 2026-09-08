@@ -44,7 +44,7 @@ const tip = {
 
 function RainfallPage() {
   const { data } = useQuery({ queryKey: ["rainfall"], queryFn: api.getRainfall });
-  const [district, setDistrict] = useState(DISTRICTS[0].name);
+  const [district, setDistrict] = useState(DISTRICTS[0]!.name);
 
   const series = (data ?? [])
     .filter((r) => r.district === district)

@@ -42,7 +42,7 @@ function ReportPage() {
   const { data } = useQuery({ queryKey: ["reports"], queryFn: api.getFieldReports });
 
   const [reporter, setReporter] = useState("");
-  const [district, setDistrict] = useState(DISTRICTS[0].name);
+  const [district, setDistrict] = useState(DISTRICTS[0]!.name);
   const [category, setCategory] = useState<FieldReport["category"]>("crack");
   const [severity, setSeverity] = useState<RiskLevel>("moderate");
   const [observation, setObservation] = useState("");

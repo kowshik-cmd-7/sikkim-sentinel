@@ -52,8 +52,9 @@ function Dashboard() {
 
   const rainByDate = Object.values(
     (rain.data ?? []).reduce<Record<string, { date: string; mm: number }>>((acc, r) => {
-      acc[r.date] = acc[r.date] ?? { date: r.date.slice(5), mm: 0 };
-      acc[r.date].mm += r.rainfallMm;
+      const cur = acc[r.date] ?? { date: r.date.slice(5), mm: 0 };
+      cur.mm += r.rainfallMm;
+      acc[r.date] = cur;
       return acc;
     }, {}),
   );
@@ -62,8 +63,9 @@ function Dashboard() {
     (events.data ?? []).reduce<Record<string, { year: string; count: number }>>(
       (acc, e) => {
         const y = e.date.slice(0, 4);
-        acc[y] = acc[y] ?? { year: y, count: 0 };
-        acc[y].count += 1;
+        const cur = acc[y] ?? { year: y, count: 0 };
+        cur.count += 1;
+        acc[y] = cur;
         return acc;
       },
       {},
