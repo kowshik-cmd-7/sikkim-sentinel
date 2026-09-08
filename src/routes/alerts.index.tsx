@@ -1,21 +1,22 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
 import { toast } from "sonner";
-import { BellRing } from "lucide-react";
-import { api } from "@/services/api";
+import { BellRing, Settings2, Shield } from "lucide-react";
 import { PageHeader } from "@/components/common/PageHeader";
 import { DemoNotice } from "@/components/common/DemoBadge";
-import { RiskBadge } from "@/components/common/RiskBadge";
-import { formatDateTime } from "@/utils/risk";
+import { AlertCard } from "@/components/notifications/AlertCard";
+import { ConnectionStatus } from "@/components/notifications/ConnectionStatus";
+import { useAlerts, useNotifications, usePreferences } from "@/hooks/useAlertNotifications";
+import { LANGUAGES, type AlertLanguage } from "@/types/alerts";
 
-export const Route = createFileRoute("/alerts")({
+export const Route = createFileRoute("/alerts/")({
   head: () => ({
     meta: [
       { title: "Alerts — NER Landslide Early Warning" },
       {
         name: "description",
         content:
-          "Prototype landslide alert queue for Sikkim districts with acknowledgement workflow.",
+          "Prototype landslide alert queue for Sikkim districts with multilingual demo messages and acknowledgement workflow.",
       },
       { property: "og:title", content: "Alerts — NER Landslide Early Warning" },
       {
@@ -28,84 +29,88 @@ export const Route = createFileRoute("/alerts")({
 });
 
 function AlertsPage() {
-  const qc = useQueryClient();
-  const { data } = useQuery({ queryKey: ["alerts"], queryFn: api.getAlerts });
+  const alerts = useAlerts();
+  const prefs = usePreferences();
+  const { acknowledge } = useNotifications();
+  const [lang, setLang] = useState<AlertLanguage | null>(null);
+  const language = lang ?? prefs.data?.language ?? "en";
 
-  const ack = useMutation({
-    mutationFn: (id: string) => api.acknowledgeAlert(id),
-    onSuccess: (alerts) => {
-      qc.setQueryData(["alerts"], alerts);
-      toast.success("Alert acknowledged (demo)");
-    },
-  });
-
-  const active = (data ?? []).filter((a) => !a.acknowledged);
-  const done = (data ?? []).filter((a) => a.acknowledged);
+  const list = (alerts.data ?? []).filter((a) => a.status !== "draft");
+  const active = list.filter((a) => a.status === "published");
+  const past = list.filter((a) => a.status === "expired");
 
   return (
     <>
       <PageHeader
         title="Alert Queue"
-        description="Rule-based demo alerts with an acknowledgement workflow for district control rooms."
+        description="Rule-based demo alerts with multilingual messaging and an acknowledgement workflow for district control rooms."
+        actions={
+          <div className="flex flex-wrap items-center gap-2">
+            <ConnectionStatus />
+            <select
+              value={language}
+              onChange={(e) => setLang(e.target.value as AlertLanguage)}
+              className="rounded-md border border-border bg-background px-2 py-1.5 text-xs"
+              aria-label="Message language"
+            >
+              {LANGUAGES.map((l) => (
+                <option key={l.code} value={l.code}>
+                  {l.native}
+                </option>
+              ))}
+            </select>
+            <Link
+              to="/alerts/preferences"
+              className="flex items-center gap-1 rounded-md border border-border px-2 py-1.5 text-xs hover:bg-accent"
+            >
+              <Settings2 className="h-3.5 w-3.5" /> Preferences
+            </Link>
+            <Link
+              to="/admin/alerts"
+              className="flex items-center gap-1 rounded-md border border-border px-2 py-1.5 text-xs hover:bg-accent"
+            >
+              <Shield className="h-3.5 w-3.5" /> Admin
+            </Link>
+          </div>
+        }
       />
       <DemoNotice>
-        These alerts are generated from static demo data and must never be treated as
-        official warnings. Official warnings come from SSDMA / IMD / GSI.
+        These alerts are generated from static demo data with clearly labelled DEMO
+        thresholds and must never be treated as official warnings. Official warnings come
+        from SSDMA / IMD / GSI.
       </DemoNotice>
 
       <section className="space-y-3">
         <h2 className="flex items-center gap-2 text-sm font-medium">
-          <BellRing className="h-4 w-4 text-red-300" /> Active ({active.length})
+          <BellRing className="h-4 w-4 text-red-300" /> Published ({active.length})
         </h2>
         {active.map((a) => (
-          <article
+          <AlertCard
             key={a.id}
-            className="rounded-lg border border-border bg-card p-4 sm:flex sm:items-start sm:gap-4"
-          >
-            <div className="min-w-0 flex-1">
-              <div className="flex flex-wrap items-center gap-2">
-                <RiskBadge level={a.level} />
-                <span className="text-sm font-medium">{a.district}</span>
-                <span className="text-[11px] text-muted-foreground">
-                  {formatDateTime(a.issuedAt)}
-                </span>
-              </div>
-              <p className="mt-2 text-sm">{a.headline}</p>
-              <p className="mt-1 text-xs text-muted-foreground">{a.detail}</p>
-            </div>
-            <button
-              onClick={() => ack.mutate(a.id)}
-              className="mt-3 w-full rounded-md border border-border px-3 py-1.5 text-xs hover:bg-accent sm:mt-0 sm:w-auto"
-            >
-              Acknowledge
-            </button>
-          </article>
+            alert={a}
+            language={language}
+            onAcknowledge={(id) =>
+              acknowledge.mutate(id, {
+                onSuccess: () => toast.success("Alert acknowledged (demo)"),
+              })
+            }
+          />
         ))}
         {active.length === 0 && (
           <p className="rounded-lg border border-border bg-card p-4 text-sm text-muted-foreground">
-            No active alerts in the demo dataset.
+            No published alerts in the demo dataset.
           </p>
         )}
       </section>
 
       <section className="space-y-3">
         <h2 className="text-sm font-medium text-muted-foreground">
-          Acknowledged ({done.length})
+          Expired ({past.length})
         </h2>
-        {done.map((a) => (
-          <article
-            key={a.id}
-            className="rounded-lg border border-border bg-card/60 p-4 opacity-75"
-          >
-            <div className="flex flex-wrap items-center gap-2">
-              <RiskBadge level={a.level} />
-              <span className="text-sm">{a.district}</span>
-              <span className="text-[11px] text-muted-foreground">
-                {formatDateTime(a.issuedAt)}
-              </span>
-            </div>
-            <p className="mt-2 text-sm text-muted-foreground">{a.headline}</p>
-          </article>
+        {past.map((a) => (
+          <div key={a.id} className="opacity-70">
+            <AlertCard alert={a} language={language} />
+          </div>
         ))}
       </section>
     </>
