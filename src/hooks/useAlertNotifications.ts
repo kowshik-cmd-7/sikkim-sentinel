@@ -1,13 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { alertsApi } from "@/services/alertsApi";
-import type { AlertPreferences, WarningAlert } from "@/types/alerts";
+import type { AlertNotification, AlertPreferences, WarningAlert } from "@/types/alerts";
 import type { RiskLevel } from "@/types";
 
 const SEVERITY_ORDER: Record<RiskLevel, number> = {
   low: 0,
   moderate: 1,
   high: 2,
-  severe: 3,
+  "very-high": 3,
+  severe: 4,
+  "insufficient-data": -1,
 };
 
 export function matchesPreferences(alert: WarningAlert, prefs: AlertPreferences) {
@@ -42,7 +44,7 @@ export function useNotifications() {
   const items = (list.data ?? [])
     .map((n) => ({ notification: n, alert: byId.get(n.alertId) }))
     .filter(
-      (x): x is { notification: (typeof list.data)[number]; alert: WarningAlert } =>
+      (x): x is { notification: AlertNotification; alert: WarningAlert } =>
         Boolean(x.alert),
     )
     .filter((x) => (prefs.data ? matchesPreferences(x.alert, prefs.data) : true))

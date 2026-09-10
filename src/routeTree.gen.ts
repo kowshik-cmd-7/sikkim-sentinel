@@ -12,8 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as AssessmentRouteImport } from './routes/assessment'
+import { Route as FieldReportingRouteImport } from './routes/field-reporting'
 import { Route as HistoricalRouteImport } from './routes/historical'
-import { Route as MapRouteImport } from './routes/map'
 import { Route as RainfallRouteImport } from './routes/rainfall'
 import { Route as ReportRouteImport } from './routes/report'
 import { Route as AdminAlertsRouteImport } from './routes/admin.alerts'
@@ -36,14 +36,14 @@ const AssessmentRoute = AssessmentRouteImport.update({
   path: '/assessment',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FieldReportingRoute = FieldReportingRouteImport.update({
+  id: '/field-reporting',
+  path: '/field-reporting',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HistoricalRoute = HistoricalRouteImport.update({
   id: '/historical',
   path: '/historical',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MapRoute = MapRouteImport.update({
-  id: '/map',
-  path: '/map',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RainfallRoute = RainfallRouteImport.update({
@@ -81,8 +81,8 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
   '/assessment': typeof AssessmentRoute
+  '/field-reporting': typeof FieldReportingRoute
   '/historical': typeof HistoricalRoute
-  '/map': typeof MapRoute
   '/rainfall': typeof RainfallRoute
   '/report': typeof ReportRoute
   '/admin/alerts': typeof AdminAlertsRoute
@@ -94,8 +94,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
   '/assessment': typeof AssessmentRoute
+  '/field-reporting': typeof FieldReportingRoute
   '/historical': typeof HistoricalRoute
-  '/map': typeof MapRoute
   '/rainfall': typeof RainfallRoute
   '/report': typeof ReportRoute
   '/admin/alerts': typeof AdminAlertsRoute
@@ -108,8 +108,8 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
   '/assessment': typeof AssessmentRoute
+  '/field-reporting': typeof FieldReportingRoute
   '/historical': typeof HistoricalRoute
-  '/map': typeof MapRoute
   '/rainfall': typeof RainfallRoute
   '/report': typeof ReportRoute
   '/admin/alerts': typeof AdminAlertsRoute
@@ -123,8 +123,8 @@ export interface FileRouteTypes {
     | '/'
     | '/analytics'
     | '/assessment'
+    | '/field-reporting'
     | '/historical'
-    | '/map'
     | '/rainfall'
     | '/report'
     | '/admin/alerts'
@@ -136,8 +136,8 @@ export interface FileRouteTypes {
     | '/'
     | '/analytics'
     | '/assessment'
+    | '/field-reporting'
     | '/historical'
-    | '/map'
     | '/rainfall'
     | '/report'
     | '/admin/alerts'
@@ -149,8 +149,8 @@ export interface FileRouteTypes {
     | '/'
     | '/analytics'
     | '/assessment'
+    | '/field-reporting'
     | '/historical'
-    | '/map'
     | '/rainfall'
     | '/report'
     | '/admin/alerts'
@@ -163,8 +163,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AnalyticsRoute: typeof AnalyticsRoute
   AssessmentRoute: typeof AssessmentRoute
+  FieldReportingRoute: typeof FieldReportingRoute
   HistoricalRoute: typeof HistoricalRoute
-  MapRoute: typeof MapRoute
   RainfallRoute: typeof RainfallRoute
   ReportRoute: typeof ReportRoute
   AdminAlertsRoute: typeof AdminAlertsRoute
@@ -196,18 +196,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AssessmentRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/field-reporting': {
+      id: '/field-reporting'
+      path: '/field-reporting'
+      fullPath: '/field-reporting'
+      preLoaderRoute: typeof FieldReportingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/historical': {
       id: '/historical'
       path: '/historical'
       fullPath: '/historical'
       preLoaderRoute: typeof HistoricalRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/map': {
-      id: '/map'
-      path: '/map'
-      fullPath: '/map'
-      preLoaderRoute: typeof MapRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/rainfall': {
@@ -259,8 +259,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AnalyticsRoute: AnalyticsRoute,
   AssessmentRoute: AssessmentRoute,
+  FieldReportingRoute: FieldReportingRoute,
   HistoricalRoute: HistoricalRoute,
-  MapRoute: MapRoute,
   RainfallRoute: RainfallRoute,
   ReportRoute: ReportRoute,
   AdminAlertsRoute: AdminAlertsRoute,

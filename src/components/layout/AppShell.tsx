@@ -7,7 +7,6 @@ import {
   CloudRain,
   Crosshair,
   LayoutDashboard,
-  Map,
   Menu,
   Mountain,
   Table2,
@@ -18,10 +17,9 @@ import { DemoBadge } from "@/components/common/DemoBadge";
 
 const NAV = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/map", label: "Risk Map", icon: Map },
-  { to: "/assessment", label: "Location Assessment", icon: Crosshair },
+  { to: "/assessment", label: "Assessment", icon: Crosshair },
+  { to: "/alerts", label: "Early Warning & Alerts", icon: Bell },
   { to: "/historical", label: "Historical Events", icon: Table2 },
-  { to: "/alerts", label: "Alerts", icon: Bell },
   { to: "/rainfall", label: "Rainfall", icon: CloudRain },
   { to: "/report", label: "Field Reporting", icon: ClipboardList },
   { to: "/analytics", label: "Analytics", icon: BarChart3 },

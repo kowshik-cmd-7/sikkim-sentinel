@@ -122,8 +122,8 @@ export const alertsApi = {
   createDraftsFromRules: (): Promise<WarningAlert[]> => {
     const drafts = evaluateDemoRules()
       .map(draftFromEvaluation)
-      .filter((d): d is WarningAlert => Boolean(d))
-      .filter((d) => !alerts.some((a) => a.triggerRule === d.triggerRule && a.status === "draft"));
+      .filter((d: WarningAlert | null): d is WarningAlert => Boolean(d))
+      .filter((d: WarningAlert) => !alerts.some((a) => a.triggerRule === d.triggerRule && a.status === "draft"));
     alerts = [...drafts, ...alerts];
     return delay(drafts);
   },

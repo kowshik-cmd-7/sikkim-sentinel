@@ -9,7 +9,7 @@ import { RiskBadge } from "@/components/common/RiskBadge";
 import { StatusPill } from "@/components/notifications/AlertCard";
 import { ConnectionStatus } from "@/components/notifications/ConnectionStatus";
 import { alertsApi, type NewAlertInput } from "@/services/alertsApi";
-import { DEMO_THRESHOLDS } from "@/services/alertEngine";
+import { DEMO_THRESHOLDS, type DemoThreshold } from "@/services/alertEngine";
 import { DISTRICTS } from "@/data/sikkim";
 import { ALERT_TYPES, type AlertType } from "@/types/alerts";
 import type { RiskLevel } from "@/types";
@@ -154,7 +154,7 @@ function AdminAlertsPage() {
           </button>
         </div>
         <ul className="mt-2 space-y-1 text-[11px] text-muted-foreground">
-          {DEMO_THRESHOLDS.map((t) => (
+          {DEMO_THRESHOLDS.map((t: DemoThreshold) => (
             <li key={t.id}>
               {t.label} → {t.severity}
             </li>

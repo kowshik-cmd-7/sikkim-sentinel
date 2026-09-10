@@ -100,3 +100,11 @@ export interface RenderedMessage {
 }
 
 export type ConnectionState = "online" | "offline" | "syncing";
+
+export type {
+  DashboardAlert,
+  DashboardAlertSeverity,
+  DashboardAlertStatus,
+  DashboardNotificationStatus,
+  DashboardAlertHorizon,
+} from "@/types";

@@ -5,7 +5,7 @@ Loads the scikit-learn GradientBoostingRegressor pipeline artifact once on start
 
 from pathlib import Path
 import sys
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 import joblib
 import numpy as np
 import pandas as pd
@@ -126,3 +126,58 @@ class LandslideRiskModelLoader:
         risk_level = classify_risk_score(risk_score)
 
         return risk_score, risk_level
+
+    def predict_batch(
+        self, features_list: List[Optional[Dict[str, Any]]]
+    ) -> List[Tuple[Optional[float], Optional[str]]]:
+        """
+        Executes vectorized batch inference for multiple input records.
+        Processes all valid rows in a single scikit-learn pipeline predict call.
+
+        Args:
+            features_list: List of dictionaries containing rainfall features (or None).
+
+        Returns:
+            List of (risk_score, risk_level) tuples in identical order.
+        """
+        if not self.is_loaded or self.model is None:
+            raise RuntimeError("Model is not loaded. Call _load_model() first.")
+
+        if not features_list:
+            return []
+
+        results: List[Tuple[Optional[float], Optional[str]]] = [
+            (None, "Insufficient Data") for _ in features_list
+        ]
+        valid_indices: List[int] = []
+        valid_rows: List[Dict[str, float]] = []
+
+        for idx, feat in enumerate(features_list):
+            if feat is None:
+                continue
+            is_valid = True
+            row: Dict[str, float] = {}
+            for k in REQUIRED_FEATURES:
+                val = feat.get(k)
+                if val is None:
+                    is_valid = False
+                    break
+                try:
+                    row[k] = float(val)
+                except (ValueError, TypeError):
+                    is_valid = False
+                    break
+            if is_valid:
+                valid_indices.append(idx)
+                valid_rows.append(row)
+
+        if valid_rows:
+            df = pd.DataFrame(valid_rows)[REQUIRED_FEATURES]
+            predictions = self.model.predict(df)
+            for idx, raw_pred in zip(valid_indices, predictions):
+                score = max(0.0, round(float(raw_pred), 2))
+                level = classify_risk_score(score)
+                results[idx] = (score, level)
+
+        return results
+

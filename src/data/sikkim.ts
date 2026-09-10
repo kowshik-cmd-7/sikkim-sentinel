@@ -1,10 +1,14 @@
-import type {
+import {
   District,
   LandslideEvent,
   RainfallReading,
   RiskAlert,
   FieldReport,
+  NER_STATES,
+  type NERState,
 } from "@/types";
+
+export { NER_STATES, type NERState };
 
 /**
  * DEMO DATA ONLY.
@@ -21,6 +25,106 @@ export const DISTRICTS: District[] = [
   { id: "namchi", name: "Namchi (South)", state: "Sikkim", lat: 27.1667, lng: 88.35, population: 146742, areaKm2: 750 },
   { id: "gyalshing", name: "Gyalshing (West)", state: "Sikkim", lat: 27.2833, lng: 88.2667, population: 79000, areaKm2: 1166 },
   { id: "soreng", name: "Soreng", state: "Sikkim", lat: 27.1833, lng: 88.1833, population: 57000, areaKm2: 425 },
+];
+
+export interface WatchpointLocation {
+  id: string;
+  name: string;
+  district: string;
+  lat: number;
+  lng: number;
+  description?: string;
+}
+
+export const SIKKIM_MONITORING_WATCHPOINTS: WatchpointLocation[] = [
+  {
+    id: "mgn-high",
+    name: "Mangan (Alpine Steep Ridge)",
+    district: "Mangan",
+    lat: 27.8174,
+    lng: 88.4778,
+    description: "High-altitude steep alpine pass with elevated relief",
+  },
+  {
+    id: "mgn-town",
+    name: "Mangan District Center",
+    district: "Mangan",
+    lat: 27.505,
+    lng: 88.532,
+    description: "North Sikkim district administrative center and highway hub",
+  },
+  {
+    id: "mgn-chungthang",
+    name: "Chungthang Valley Corridor",
+    district: "Mangan",
+    lat: 27.6011,
+    lng: 88.6446,
+    description: "Critical confluence corridor with historical flood and landslide vulnerability",
+  },
+  {
+    id: "mgn-dikchu",
+    name: "Dikchu River Cut Slopes",
+    district: "Mangan",
+    lat: 27.4211,
+    lng: 88.5122,
+    description: "Hydropower approach road and river valley cut slopes",
+  },
+  {
+    id: "gtk-capital",
+    name: "Gangtok District Capital",
+    district: "Gangtok",
+    lat: 27.3389,
+    lng: 88.6065,
+    description: "High-density urban slope settlements in state capital",
+  },
+  {
+    id: "gtk-ranipool",
+    name: "Ranipool Corridor",
+    district: "Gangtok",
+    lat: 27.2531,
+    lng: 88.5942,
+    description: "NH-10 arterial cut slopes with frequent translational failures",
+  },
+  {
+    id: "nmc-center",
+    name: "Namchi District Center",
+    district: "Namchi",
+    lat: 27.1667,
+    lng: 88.35,
+    description: "South Sikkim district center and ridge communities",
+  },
+  {
+    id: "nmc-melli",
+    name: "Melli Riverbank Slopes",
+    district: "Namchi",
+    lat: 27.0925,
+    lng: 88.4586,
+    description: "Teesta riverbank undercutting and highway access point",
+  },
+  {
+    id: "gyl-center",
+    name: "Gyalshing District Center",
+    district: "Gyalshing",
+    lat: 27.2833,
+    lng: 88.2667,
+    description: "West Sikkim administrative center and tourist transit route",
+  },
+  {
+    id: "pky-center",
+    name: "Pakyong District Center",
+    district: "Pakyong",
+    lat: 27.2333,
+    lng: 88.5833,
+    description: "Airport ridge and transport corridor in East-South transition",
+  },
+  {
+    id: "srn-center",
+    name: "Soreng District Center",
+    district: "Soreng",
+    lat: 27.1833,
+    lng: 88.1833,
+    description: "Western border agricultural slopes and settlement belt",
+  },
 ];
 
 export const HISTORICAL_EVENTS: LandslideEvent[] = [
@@ -70,7 +174,49 @@ export const ALERTS: RiskAlert[] = [
 ];
 
 export const FIELD_REPORTS: FieldReport[] = [
-  { id: "fr-01", submittedAt: "2026-09-08T03:15:00Z", reporter: "Ward Volunteer — Dikchu", district: "Mangan (North)", observation: "Demo: fresh tension cracks above the link road, ~15 m long.", category: "crack", severity: "high" },
-  { id: "fr-02", submittedAt: "2026-09-07T14:02:00Z", reporter: "PWD Field Unit", district: "Gangtok", observation: "Demo: continuous seepage from retaining wall weep holes.", category: "water-seepage", severity: "moderate" },
-  { id: "fr-03", submittedAt: "2026-09-06T09:30:00Z", reporter: "Panchayat Office — Melli", district: "Namchi (South)", observation: "Demo: minor debris on carriageway, cleared locally.", category: "road-block", severity: "low" },
+  {
+    id: "fr-01",
+    latitude: 27.408,
+    longitude: 88.528,
+    timestamp: "2026-09-08T03:15:00Z",
+    submittedAt: "2026-09-08T03:15:00Z",
+    reporterName: "Ward Volunteer — Dikchu",
+    reporter: "Ward Volunteer — Dikchu",
+    district: "Mangan (North)",
+    description: "Demo: fresh tension cracks above the link road, ~15 m long.",
+    observation: "Demo: fresh tension cracks above the link road, ~15 m long.",
+    category: "Slope Crack",
+    severity: "High",
+    status: "SUBMITTED",
+  },
+  {
+    id: "fr-02",
+    latitude: 27.3389,
+    longitude: 88.6065,
+    timestamp: "2026-09-07T14:02:00Z",
+    submittedAt: "2026-09-07T14:02:00Z",
+    reporterName: "PWD Field Unit",
+    reporter: "PWD Field Unit",
+    district: "Gangtok",
+    description: "Demo: continuous seepage from retaining wall weep holes.",
+    observation: "Demo: continuous seepage from retaining wall weep holes.",
+    category: "Waterlogging",
+    severity: "Moderate",
+    status: "REVIEWED",
+  },
+  {
+    id: "fr-03",
+    latitude: 27.181,
+    longitude: 88.462,
+    timestamp: "2026-09-06T09:30:00Z",
+    submittedAt: "2026-09-06T09:30:00Z",
+    reporterName: "Panchayat Office — Melli",
+    reporter: "Panchayat Office — Melli",
+    district: "Namchi (South)",
+    description: "Demo: minor debris on carriageway, cleared locally.",
+    observation: "Demo: minor debris on carriageway, cleared locally.",
+    category: "Road Blockage",
+    severity: "Low",
+    status: "RESOLVED",
+  },
 ];

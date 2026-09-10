@@ -1,4 +1,4 @@
-import type { RiskCell, RiskLevel } from "@/types";
+import type { RiskCell, RiskLevel, TerrainAssessment, TerrainSusceptibility } from "@/types";
 import { SIKKIM_CENTER } from "@/data/sikkim";
 
 export function levelFromScore(score: number | null | undefined): RiskLevel {
@@ -8,6 +8,74 @@ export function levelFromScore(score: number | null | undefined): RiskLevel {
   if (score >= 55) return "high";
   if (score >= 30) return "moderate";
   return "low";
+}
+
+export const TERRAIN_SUSCEPTIBILITY_SCORES: Record<TerrainSusceptibility, number> = {
+  Low: 0,
+  Moderate: 25,
+  High: 60,
+  "Very High": 90,
+};
+
+export const TERRAIN_WEIGHT = 0.35;
+
+export interface HybridRiskResult {
+  rainfallRiskScore: number | null;
+  rainfallRiskLevel: RiskLevel;
+  terrainScore: number;
+  terrainSusceptibility: TerrainSusceptibility;
+  finalRiskScore: number | null;
+  finalRiskLevel: RiskLevel;
+  terrainContribution: number;
+}
+
+/**
+ * Combines rainfall-driven ML risk with real terrain susceptibility.
+ *
+ * Formula:
+ * terrainContribution = terrainScore * (1 - rainfallRiskScore / 100)
+ * finalRiskScore = clamp(rainfallRiskScore + terrainContribution * TERRAIN_WEIGHT, 0, 100)
+ *
+ * Rainfall remains the primary trigger; terrain modifies vulnerability.
+ */
+export function calculateHybridRisk(
+  rainfallRiskScore: number | null | undefined,
+  terrain: TerrainAssessment | null | undefined,
+): HybridRiskResult {
+  if (
+    rainfallRiskScore === null ||
+    rainfallRiskScore === undefined ||
+    Number.isNaN(rainfallRiskScore) ||
+    !terrain
+  ) {
+    const rainfallLevel = levelFromScore(rainfallRiskScore);
+    return {
+      rainfallRiskScore: rainfallRiskScore ?? null,
+      rainfallRiskLevel: rainfallLevel,
+      terrainScore: terrain ? (TERRAIN_SUSCEPTIBILITY_SCORES[terrain.terrain_susceptibility] ?? 0) : 0,
+      terrainSusceptibility: terrain?.terrain_susceptibility ?? "Low",
+      finalRiskScore: null,
+      finalRiskLevel: "insufficient-data",
+      terrainContribution: 0,
+    };
+  }
+
+  const terrainScore = TERRAIN_SUSCEPTIBILITY_SCORES[terrain.terrain_susceptibility] ?? 0;
+  const terrainContribution = Number((terrainScore * (1 - rainfallRiskScore / 100)).toFixed(2));
+  const rawFinalScore = rainfallRiskScore + terrainContribution * TERRAIN_WEIGHT;
+  const clampedFinalScore = Math.max(0, Math.min(100, Number(rawFinalScore.toFixed(2))));
+  const finalLevel = levelFromScore(clampedFinalScore);
+  const rainfallLevel = levelFromScore(rainfallRiskScore);
+
+  return {
+    rainfallRiskScore: Number(rainfallRiskScore.toFixed(2)),
+    rainfallRiskLevel: rainfallLevel,
+    terrainScore,
+    terrainSusceptibility: terrain.terrain_susceptibility,
+    finalRiskScore: clampedFinalScore,
+    finalRiskLevel: finalLevel,
+    terrainContribution,
+  };
 }
 
 export const RISK_COLORS: Record<RiskLevel, string> = {
