@@ -1,9 +1,6 @@
 /**
- * Mock API service boundary.
- *
- * Every function here mimics an async HTTP call. When the FastAPI + ML backend
- * exists, swap the bodies for `fetch(`${API_BASE}/...`)` calls — the component
- * layer never needs to change.
+ * API service boundary.
+ * Connected to standalone Python FastAPI risk prediction service for assessLocation.
  */
 import {
   ALERTS,
@@ -13,17 +10,24 @@ import {
   RAINFALL_SERIES,
 } from "@/data/sikkim";
 import type {
+  AssessmentFactor,
   District,
   FieldReport,
   LandslideEvent,
   LocationAssessment,
+  RainfallModelInputs,
   RainfallReading,
   RiskAlert,
   RiskCell,
+  RiskLevel,
 } from "@/types";
-import { generateRiskGrid, haversineKm, levelFromScore } from "@/utils/risk";
+import { generateRiskGrid, haversineKm } from "@/utils/risk";
 
-export const API_BASE = "/api/v1"; // future FastAPI base URL
+export const API_BASE = "/api/v1";
+export const PYTHON_API_BASE =
+  (typeof import.meta !== "undefined" && import.meta.env?.VITE_PYTHON_API_URL) ||
+  "http://127.0.0.1:8000";
+
 const LATENCY = 220;
 
 function delay<T>(value: T, ms = LATENCY): Promise<T> {
@@ -40,7 +44,7 @@ export const api = {
   /** GET /landslides/historical */
   getHistoricalEvents: (): Promise<LandslideEvent[]> => delay(HISTORICAL_EVENTS),
 
-  /** GET /risk/grid — DEMO synthetic grid, replace with model raster */
+  /** GET /risk/grid — DEMO synthetic grid, replace with model raster in future phase */
   getRiskGrid: (): Promise<RiskCell[]> => delay(generateRiskGrid()),
 
   /** GET /rainfall */
@@ -72,50 +76,113 @@ export const api = {
   },
 
   /**
-   * POST /assess — DEMO scoring only.
-   * Rule-based weighted sum over synthetic inputs. No trained model is involved.
+   * Real Landslide Risk Prediction via Python FastAPI backend (/predict).
+   * Queries the scikit-learn GradientBoostingRegressor pipeline with 5 rainfall inputs.
    */
-  assessLocation: (lat: number, lng: number): Promise<LocationAssessment> => {
+  assessLocation: async (
+    lat: number,
+    lng: number,
+    rainfall?: RainfallModelInputs,
+  ): Promise<LocationAssessment> => {
     const nearest = DISTRICTS.map((d) => ({
       d,
       km: haversineKm([lat, lng], [d.lat, d.lng]),
     })).sort((a, b) => a.km - b.km)[0]!;
 
-    const nearbyEvents = HISTORICAL_EVENTS.filter(
-      (e) => haversineKm([lat, lng], [e.lat, e.lng]) < 20,
-    );
+    const payload: RainfallModelInputs = {
+      rainfall_1d: rainfall?.rainfall_1d ?? null,
+      rainfall_3d: rainfall?.rainfall_3d ?? null,
+      rainfall_7d: rainfall?.rainfall_7d ?? null,
+      rainfall_14d: rainfall?.rainfall_14d ?? null,
+      rainfall_30d: rainfall?.rainfall_30d ?? null,
+    };
 
-    const rain = RAINFALL_SERIES.filter((r) => r.district === nearest.d.name).slice(-7);
-    const rain7 = rain.reduce((s, r) => s + r.rainfallMm, 0);
-    const soil = rain.length ? rain[rain.length - 1]!.soilMoisturePct : 50;
-    const slopeProxy = Math.min(100, 30 + Math.abs(lat - 27.3) * 400);
-    const historyProxy = Math.min(100, nearbyEvents.length * 22);
+    const res = await fetch(`${PYTHON_API_BASE}/predict`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
 
-    const factors = [
-      { label: "Slope steepness (proxy)", value: Math.round(slopeProxy), weight: 0.3 },
-      { label: "7-day rainfall", value: Math.round(Math.min(100, rain7 / 3)), weight: 0.3 },
-      { label: "Soil moisture", value: soil, weight: 0.2 },
-      { label: "Historical density", value: Math.round(historyProxy), weight: 0.2 },
+    if (!res.ok) {
+      throw new Error(`Risk prediction request failed (${res.status}: ${res.statusText})`);
+    }
+
+    const data: {
+      status: "success" | "insufficient_data";
+      risk_score: number | null;
+      risk_level: "Low" | "Moderate" | "High" | "Very High" | "Insufficient Data";
+    } = await res.json();
+
+    const levelMap: Record<string, RiskLevel> = {
+      Low: "low",
+      Moderate: "moderate",
+      High: "high",
+      "Very High": "very-high",
+      "Insufficient Data": "insufficient-data",
+    };
+    const level: RiskLevel = levelMap[data.risk_level] ?? "insufficient-data";
+
+    // Explanatory model feature importance (from trained GradientBoostingRegressor pipeline)
+    const factors: AssessmentFactor[] = [
+      {
+        label: "7-Day Rainfall (rainfall_7d)",
+        value: payload.rainfall_7d,
+        weight: 0.5247,
+        importancePct: 52.47,
+      },
+      {
+        label: "3-Day Rainfall (rainfall_3d)",
+        value: payload.rainfall_3d,
+        weight: 0.3424,
+        importancePct: 34.24,
+      },
+      {
+        label: "14-Day Rainfall (rainfall_14d)",
+        value: payload.rainfall_14d,
+        weight: 0.0938,
+        importancePct: 9.38,
+      },
+      {
+        label: "30-Day Rainfall (rainfall_30d)",
+        value: payload.rainfall_30d,
+        weight: 0.0220,
+        importancePct: 2.20,
+      },
+      {
+        label: "1-Day Rainfall (rainfall_1d)",
+        value: payload.rainfall_1d,
+        weight: 0.0171,
+        importancePct: 1.71,
+      },
     ];
 
-    const score = Math.round(factors.reduce((s, f) => s + f.value * f.weight, 0));
-    const level = levelFromScore(score);
+    let recommendation = "";
+    if (level === "very-high") {
+      recommendation =
+        "Critical landslide risk: High antecedent rainfall saturation. Restrict traffic along cut-slopes and vulnerable highway corridors, alert district emergency operations, and inspect known landslide chutes.";
+    } else if (level === "high") {
+      recommendation =
+        "High landslide risk: Increase monitoring frequency, prepare local response units, and check drainage paths above arterial roads.";
+    } else if (level === "moderate") {
+      recommendation =
+        "Moderate landslide risk: Routine vigilance recommended after intense rainfall spells. Monitor retaining structures for seepage.";
+    } else if (level === "low") {
+      recommendation =
+        "Low landslide risk: Antecedent rainfall is currently within baseline thresholds. No immediate emergency action indicated.";
+    } else {
+      recommendation =
+        "Insufficient rainfall data: One or more critical antecedent rainfall metrics are missing or unavailable. Supply all 5 metrics (1d, 3d, 7d, 14d, 30d) to generate a reliable risk score.";
+    }
 
-    return delay({
+    return {
       lat,
       lng,
       district: nearest.d.name,
-      score,
+      score: data.risk_score,
       level,
       factors,
-      recommendation:
-        level === "severe"
-          ? "Demo guidance: avoid the slope, restrict traffic and request an engineering inspection."
-          : level === "high"
-            ? "Demo guidance: increase monitoring frequency and prepare evacuation routes."
-            : level === "moderate"
-              ? "Demo guidance: routine inspection after heavy rainfall spells."
-              : "Demo guidance: no immediate action indicated.",
-    });
+      recommendation,
+      rainfallInputs: payload,
+    };
   },
 };

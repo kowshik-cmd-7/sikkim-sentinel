@@ -6,7 +6,9 @@ const styles: Record<RiskLevel, string> = {
   low: "border-emerald-500/40 bg-emerald-500/10 text-emerald-300",
   moderate: "border-yellow-500/40 bg-yellow-500/10 text-yellow-300",
   high: "border-orange-500/40 bg-orange-500/10 text-orange-300",
+  "very-high": "border-red-500/40 bg-red-500/10 text-red-300",
   severe: "border-red-500/40 bg-red-500/10 text-red-300",
+  "insufficient-data": "border-slate-500/40 bg-slate-500/10 text-slate-300",
 };
 
 export function RiskBadge({ level, className }: { level: RiskLevel; className?: string }) {
@@ -14,11 +16,11 @@ export function RiskBadge({ level, className }: { level: RiskLevel; className?: 
     <span
       className={cn(
         "inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide",
-        styles[level],
+        styles[level] ?? styles.low,
         className,
       )}
     >
-      {RISK_LABELS[level]}
+      {RISK_LABELS[level] ?? level}
     </span>
   );
 }

@@ -1,10 +1,12 @@
 import type { RiskCell, RiskLevel } from "@/types";
 import { SIKKIM_CENTER } from "@/data/sikkim";
 
-export function levelFromScore(score: number): RiskLevel {
-  if (score >= 75) return "severe";
+export function levelFromScore(score: number | null | undefined): RiskLevel {
+  if (score === null || score === undefined || isNaN(score))
+    return "insufficient-data";
+  if (score >= 75) return "very-high";
   if (score >= 55) return "high";
-  if (score >= 35) return "moderate";
+  if (score >= 30) return "moderate";
   return "low";
 }
 
@@ -12,14 +14,18 @@ export const RISK_COLORS: Record<RiskLevel, string> = {
   low: "#22c55e",
   moderate: "#eab308",
   high: "#f97316",
+  "very-high": "#ef4444",
   severe: "#ef4444",
+  "insufficient-data": "#94a3b8",
 };
 
 export const RISK_LABELS: Record<RiskLevel, string> = {
   low: "Low",
   moderate: "Moderate",
   high: "High",
-  severe: "Severe",
+  "very-high": "Very High",
+  severe: "Very High",
+  "insufficient-data": "Insufficient Data",
 };
 
 function pseudoRandom(a: number, b: number) {
@@ -37,7 +43,9 @@ export function generateRiskGrid(size = 0.05, span = 5): RiskCell[] {
       const lng = clng + j * size;
       const noise = pseudoRandom(i, j);
       const northBias = (i + span) / (2 * span);
-      const score = Math.round(Math.min(98, Math.max(6, noise * 60 + northBias * 40)));
+      const score = Math.round(
+        Math.min(98, Math.max(6, noise * 60 + northBias * 40)),
+      );
       cells.push({
         id: `cell-${i}-${j}`,
         lat,
@@ -58,7 +66,8 @@ export function haversineKm(a: [number, number], b: [number, number]) {
   const la1 = (a[0] * Math.PI) / 180;
   const la2 = (b[0] * Math.PI) / 180;
   const h =
-    Math.sin(dLat / 2) ** 2 + Math.cos(la1) * Math.cos(la2) * Math.sin(dLng / 2) ** 2;
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(la1) * Math.cos(la2) * Math.sin(dLng / 2) ** 2;
   return 2 * R * Math.asin(Math.sqrt(h));
 }
 
