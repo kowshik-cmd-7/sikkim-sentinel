@@ -1,5 +1,5 @@
 /**
- * Landslide Alert & Early Warning Engine for Sikkim Sentinel.
+ * Landslide Alert & Early Warning Engine for Bhurakshak.
  *
  * 1. Evaluates current hybrid risk and projected multi-horizon forecasts (6h, 24h, 48h, 72h)
  *    against official disaster management thresholds (CRITICAL, WARNING, WATCH).

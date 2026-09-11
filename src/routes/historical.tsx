@@ -12,16 +12,16 @@ import type { LandslideEvent } from "@/types";
 export const Route = createFileRoute("/historical")({
   head: () => ({
     meta: [
-      { title: "Historical Events — NER Landslide Early Warning" },
+      { title: "Bhurakshak — Historical Events" },
       {
         name: "description",
         content:
-          "Searchable table of illustrative historical landslide records across Sikkim districts.",
+          "Bhurakshak searchable archive of historical landslide records across the North Eastern Region.",
       },
-      { property: "og:title", content: "Historical Events — NER Landslide Early Warning" },
+      { property: "og:title", content: "Bhurakshak — Historical Events" },
       {
         property: "og:description",
-        content: "Searchable Sikkim landslide event archive. Demo data only.",
+        content: "Searchable landslide event archive for the North Eastern Region.",
       },
     ],
   }),

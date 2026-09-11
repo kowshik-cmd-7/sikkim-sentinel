@@ -18,16 +18,16 @@ import { formatDateTime } from "@/utils/risk";
 export const Route = createFileRoute("/admin/alerts")({
   head: () => ({
     meta: [
-      { title: "Alert administration — NER Landslide Early Warning" },
+      { title: "Bhurakshak — Alert Administration" },
       {
         name: "description",
         content:
-          "Create, publish, acknowledge and expire prototype Sikkim landslide alerts and review mock delivery status.",
+          "Configure, publish, acknowledge, and simulate emergency alert rules and dispatch channels.",
       },
-      { property: "og:title", content: "Alert administration — NER Landslide Early Warning" },
+      { property: "og:title", content: "Bhurakshak — Alert Administration" },
       {
         property: "og:description",
-        content: "Manage prototype Sikkim landslide alerts. Demo data only.",
+        content: "Rule administration and notification dispatch management.",
       },
     ],
   }),
@@ -135,17 +135,16 @@ function AdminAlertsPage() {
     <>
       <PageHeader
         title="Alert Administration"
-        description="Create, edit, publish, acknowledge and expire demo alerts, and review mock recipient and delivery status."
+        description="Configure, publish, acknowledge and manage scenario alerts, and inspect automated notification delivery channels."
         actions={<ConnectionStatus />}
       />
       <DemoNotice>
-        Every action here affects the in-memory DEMO dataset only. Publishing produces
-        MOCK NOTIFICATION delivery records — no SMS, push or email is transmitted.
+        Scenario-based risk projection and alert rule configuration. Automated test dispatches generate simulated delivery verification records.
       </DemoNotice>
 
       <section className="rounded-lg border border-border bg-card p-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="text-sm font-medium">Rule automation (DEMO thresholds)</h2>
+          <h2 className="text-sm font-medium">Automated Threshold Rules</h2>
           <button
             onClick={() => autoDraft.mutate()}
             className="flex items-center gap-1 rounded-md border border-border px-2.5 py-1.5 text-xs hover:bg-accent"

@@ -35,13 +35,13 @@ import { NER_STATES, type NERState } from "@/types";
 export const Route = createFileRoute("/rainfall")({
   head: () => ({
     meta: [
-      { title: "Rainfall Intelligence — NER Landslide Early Warning" },
+      { title: "Bhurakshak — Rainfall Intelligence" },
       {
         name: "description",
         content:
-          "Real-time antecedent precipitation monitoring and 72-hour NWP rainfall forecasts across 8 North Eastern Region states.",
+          "Bhurakshak real-time antecedent precipitation monitoring and 72-hour NWP rainfall forecasts across 8 North Eastern Region states.",
       },
-      { property: "og:title", content: "Rainfall Intelligence — NER Landslide Early Warning" },
+      { property: "og:title", content: "Bhurakshak — Rainfall Intelligence" },
       {
         property: "og:description",
         content:
@@ -351,7 +351,7 @@ function RainfallPage() {
             Select North Eastern Region (NER) State
           </span>
           <span className="text-[11px] font-mono text-muted-foreground">
-            8 States Restricted (SIH PS 26001)
+            8 NER States Coverage
           </span>
         </div>
 

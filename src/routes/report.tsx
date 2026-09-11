@@ -43,11 +43,11 @@ import type {
 export const Route = createFileRoute("/report")({
   head: () => ({
     meta: [
-      { title: "Field Reporting & Geo-Tagging — NER Landslide Early Warning" },
+      { title: "Bhurakshak — Field Reporting & Geo-Tagging" },
       {
         name: "description",
         content:
-          "Submit and track geo-tagged ground observations of tension cracks, slope movement, rockfall, and road blockage across Sikkim.",
+          "Bhurakshak field reporting: submit and track geo-tagged ground observations of tension cracks, slope movement, rockfall, and road blockage across North Eastern Region states.",
       },
     ],
   }),

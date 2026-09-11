@@ -42,13 +42,13 @@ import type { CalculatedRiskPoint, DashboardAlert, FieldReport } from "@/types";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Command Dashboard — NER Landslide Early Warning" },
+      { title: "Bhurakshak — Command Dashboard" },
       {
         name: "description",
         content:
-          "AI-powered landslide monitoring command dashboard for North Eastern Region states: dynamic risk heatmap, telemetry alerts, multi-horizon forecasts, and emergency response queue.",
+          "Bhurakshak AI-powered landslide monitoring command dashboard for North Eastern Region states: dynamic risk heatmap, telemetry alerts, multi-horizon forecasts, and emergency response queue.",
       },
-      { property: "og:title", content: "Command Dashboard — NER Landslide Early Warning" },
+      { property: "og:title", content: "Bhurakshak — Command Dashboard" },
       {
         property: "og:description",
         content: "Dynamic NER landslide risk heatmap backed by live telemetry and trained ML models.",
@@ -241,7 +241,7 @@ function Dashboard() {
       {/* Header */}
       <PageHeader
         title="NER Landslide Command Dashboard"
-        description="Real-time hazard monitoring across 8 North Eastern Region states · AI-Based Early Warning System · SIH 26001"
+        description="Real-time hazard monitoring across 8 North Eastern Region states · AI-Based Early Warning & Landslide Risk Monitoring"
         badge={
           <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-300">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -250,7 +250,7 @@ function Dashboard() {
         }
       />
 
-      {/* SIH End-to-End Operational Pipeline Ribbon */}
+      {/* Operational Pipeline Ribbon */}
       <div className="rounded-lg border border-border bg-card/50 px-4 py-2.5 overflow-x-auto">
         <div className="flex items-center gap-1.5 min-w-max">
           <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-1 shrink-0 mr-2">
@@ -862,7 +862,7 @@ function Dashboard() {
           </div>
 
           <div className="text-[11px] text-muted-foreground text-center border-t border-border/50 pt-3 mt-2">
-            Sikkim Sentinel · SIH Problem Statement 26001
+            Bhurakshak · AI-Based Early Warning &amp; Landslide Risk Monitoring System
           </div>
         </div>
       </div>

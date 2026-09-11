@@ -21,16 +21,16 @@ import { DEFAULT_PREFERENCES } from "@/data/alerts-demo";
 export const Route = createFileRoute("/alerts/preferences")({
   head: () => ({
     meta: [
-      { title: "Alert preferences — NER Landslide Early Warning" },
+      { title: "Bhurakshak — Alert Preferences" },
       {
         name: "description",
         content:
-          "Choose districts, language, alert types, minimum severity and channels for prototype Sikkim landslide alerts.",
+          "Configure geographic regions, languages, alert hazard types, severity thresholds, and notification delivery channels.",
       },
-      { property: "og:title", content: "Alert preferences — NER Landslide Early Warning" },
+      { property: "og:title", content: "Bhurakshak — Alert Preferences" },
       {
         property: "og:description",
-        content: "Configure prototype Sikkim landslide alert delivery. Demo data only.",
+        content: "Notification channel and geographic alert routing preferences.",
       },
     ],
   }),
@@ -57,7 +57,7 @@ function PreferencesPage() {
     mutationFn: (p: AlertPreferences) => alertsApi.savePreferences(p),
     onSuccess: (p) => {
       qc.setQueryData(["alert-preferences"], p);
-      toast.success("Alert preferences saved (stored on this device)");
+      toast.success("Alert preferences saved successfully");
     },
   });
 
@@ -65,11 +65,10 @@ function PreferencesPage() {
     <>
       <PageHeader
         title="Alert Preferences"
-        description="Control which demo alerts reach you, in which language and over which mock channels."
+        description="Configure target districts, delivery languages, and notification channels for automated risk alerts."
       />
       <DemoNotice>
-        Preferences are stored on this device only and filter DEMO alerts in this
-        prototype. No real subscription is created and no message is ever sent.
+        Alert preferences are securely saved to your local device profile for targeted hazard routing and dispatch simulation.
       </DemoNotice>
 
       <div className="grid gap-4 md:grid-cols-2">

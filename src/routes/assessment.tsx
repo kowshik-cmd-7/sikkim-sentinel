@@ -47,20 +47,20 @@ export const Route = createFileRoute("/assessment")({
   head: () => ({
     meta: [
       {
-        title: "Location Assessment — NER Landslide Early Warning",
+        title: "Bhurakshak — Location Risk Assessment",
       },
       {
         name: "description",
         content:
-          "Assess landslide hazard using the trained GradientBoostingRegressor pipeline and antecedent rainfall accumulation lags.",
+          "Bhurakshak location risk assessment: evaluate landslide hazard using the trained GradientBoostingRegressor pipeline and antecedent rainfall accumulation lags.",
       },
       {
         property: "og:title",
-        content: "Location Assessment — NER Landslide Early Warning",
+        content: "Bhurakshak — Location Risk Assessment",
       },
       {
         property: "og:description",
-        content: "Rainfall-based landslide risk scoring for Sikkim.",
+        content: "Rainfall-based and terrain hybrid landslide risk scoring for the North Eastern Region.",
       },
     ],
   }),

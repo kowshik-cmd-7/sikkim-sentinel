@@ -517,7 +517,7 @@ export function EarlyWarningAlertPanel({
             </div>
 
             {/* -------------------------------------------------------------
-                COLLAPSIBLE MACHINE DISPATCH PAYLOAD (FOR SIH EVALUATION)
+                COLLAPSIBLE MACHINE DISPATCH PAYLOAD
             ------------------------------------------------------------- */}
             <div className="rounded-lg border border-border/70 bg-card overflow-hidden">
               <button

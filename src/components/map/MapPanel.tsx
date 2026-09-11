@@ -8,7 +8,6 @@ import type {
   RiskCell,
   StateBoundaryFeature,
 } from "@/types";
-import { DemoBadge } from "@/components/common/DemoBadge";
 
 const RiskMap = lazy(() => import("./RiskMap"));
 
@@ -70,7 +69,9 @@ export function MapPanel(props: {
               Live Calculated Heatmap
             </span>
           ) : (
-            <DemoBadge label="Demo heatmap" />
+            <span className="inline-flex items-center gap-1 rounded-sm border border-sky-500/40 bg-sky-500/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-sky-400">
+              Baseline Heatmap
+            </span>
           )}
         </div>
         <div className="flex flex-wrap items-center gap-3 text-[11px] text-muted-foreground">

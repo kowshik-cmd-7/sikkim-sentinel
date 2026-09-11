@@ -1,5 +1,5 @@
 /**
- * Alert Generation & Management Service for Sikkim Sentinel.
+ * Alert Generation & Management Service for Bhurakshak.
  *
  * Implements the alert-generation layer based on the existing hybrid risk results:
  * - HIGH: final hybrid risk >= 60
@@ -21,7 +21,8 @@ import type { HorizonRiskAssessment } from "@/services/api";
 import { findNearbyFacilities } from "@/data/facilities";
 
 export const DEFAULT_ALERT_RADIUS_KM = 5;
-export const ALERT_STORAGE_KEY = "sikkim-sentinel-alerts";
+export const LEGACY_ALERT_STORAGE_KEY = "sikkim-sentinel-alerts";
+export const ALERT_STORAGE_KEY = "bhurakshak-alerts";
 export const ALERT_THRESHOLD_HIGH = 60.0;
 export const ALERT_THRESHOLD_VERY_HIGH = 80.0;
 export const DEFAULT_ALERT_EXPIRY_HOURS = 24;
@@ -360,7 +361,19 @@ export function deleteStoredAlert(
 export function getStoredAlerts(): DashboardAlert[] {
   if (typeof window === "undefined") return [];
   try {
-    const raw = localStorage.getItem(ALERT_STORAGE_KEY);
+    let raw = localStorage.getItem(ALERT_STORAGE_KEY);
+    // Backwards-compatible migration: If new key is empty, check legacy key
+    if (!raw) {
+      const legacyRaw = localStorage.getItem(LEGACY_ALERT_STORAGE_KEY);
+      if (legacyRaw) {
+        raw = legacyRaw;
+        try {
+          localStorage.setItem(ALERT_STORAGE_KEY, legacyRaw);
+        } catch {
+          // ignore storage write errors
+        }
+      }
+    }
     if (!raw) return [];
     const parsed: DashboardAlert[] = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];

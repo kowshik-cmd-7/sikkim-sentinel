@@ -79,17 +79,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "NER Landslide Early Warning — Sikkim Pilot" },
+      { title: "Bhurakshak — AI-Based Landslide Risk Monitoring" },
       {
         name: "description",
         content:
-          "Prototype landslide risk monitoring command centre for the North Eastern Region, starting with Sikkim. Demo data only.",
+          "Bhurakshak is an AI-powered landslide risk monitoring and early warning platform for the North Eastern Region of India.",
       },
-      { name: "author", content: "SIH Prototype Team" },
-      { property: "og:title", content: "NER Landslide Early Warning — Sikkim Pilot" },
+      { name: "author", content: "Bhurakshak Team" },
+      { property: "og:title", content: "Bhurakshak — AI-Based Landslide Risk Monitoring" },
       {
         property: "og:description",
-        content: "Prototype landslide risk monitoring dashboard for Sikkim. Demo data only.",
+        content: "Bhurakshak is an AI-powered landslide risk monitoring and early warning platform for the North Eastern Region of India.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

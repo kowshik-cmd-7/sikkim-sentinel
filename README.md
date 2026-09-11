@@ -1,6 +1,8 @@
-# Sikkim Sentinel
+# Bhurakshak
 
-Build the requested Smart India Hackathon web application: “AI-Based Early Warning and Landslide Risk Monitoring System in North Eastern Region (NER),” starting with Sikkim. Implement the actual frontend dashboard app, not a landing page. Follow the full requested structure: React+TypeScript/Vite/Tailwind, modular data/services/components/pages/types/utils, Leaflet risk map as core with Sikkim-centered historical landslide markers and clearly labeled DEMO risk heatmap/grid, navigation, dashboard charts, location assessment, searchable historical table, alerts, rainfall, field reporting, analytics, responsive command-center UI, mock API service boundary for future FastAPI/ML integration, clear DEMO DATA indicators and no claims of real AI/NASA data. Ensure npm install and npm run dev work.
+**AI-Based Early Warning & Landslide Risk Monitoring System for the North Eastern Region of India**
+
+Bhurakshak is an AI-powered landslide risk monitoring and early warning platform for the North Eastern Region of India. It integrates a trained `GradientBoostingRegressor` machine learning pipeline with real-time multi-day antecedent rainfall accumulation lags (1d, 3d, 7d, 14d, 30d), high-resolution Copernicus 30m/90m DEM topographic slope analysis, multi-horizon forecasts (6h, 24h, 48h, 72h), dynamic state boundaries, and automated early warning notification dispatches.
 
 This project was built with [Lovable](https://lovable.dev).
 

@@ -1,5 +1,5 @@
 """
-Facility and Alert geospatial service for Sikkim Sentinel.
+Facility and Alert geospatial service for Bhurakshak.
 Curated dataset of disaster response authorities, hospitals, and schools across Sikkim.
 """
 import math

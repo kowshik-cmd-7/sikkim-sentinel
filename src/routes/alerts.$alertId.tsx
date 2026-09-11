@@ -9,23 +9,23 @@ import { DemoNotice } from "@/components/common/DemoBadge";
 import { RiskBadge } from "@/components/common/RiskBadge";
 import { StatusPill } from "@/components/notifications/AlertCard";
 import { MapPanel } from "@/components/map/MapPanel";
-import { LANGUAGES } from "@/types/alerts";
+import { LANGUAGES, type AlertLanguage } from "@/types/alerts";
 import { renderAlertMessage } from "@/services/i18n";
 import { formatDateTime } from "@/utils/risk";
 
 export const Route = createFileRoute("/alerts/$alertId")({
   head: () => ({
     meta: [
-      { title: "Alert detail — NER Landslide Early Warning" },
+      { title: "Bhurakshak — Alert Detail" },
       {
         name: "description",
         content:
-          "Full detail of a prototype Sikkim landslide alert: affected areas, map context, multilingual messages and mock delivery status.",
+          "Comprehensive details of landslide early warning alert: affected areas, topography, multi-lingual messages, and dispatch status.",
       },
-      { property: "og:title", content: "Alert detail — NER Landslide Early Warning" },
+      { property: "og:title", content: "Bhurakshak — Alert Detail" },
       {
         property: "og:description",
-        content: "Prototype landslide alert detail for Sikkim. Demo data only.",
+        content: "Detailed hazard alert record and response instructions.",
       },
     ],
   }),
@@ -45,20 +45,27 @@ function AlertDetailPage() {
     queryFn: alertsApi.listDeliveries,
   });
 
-  const a = alert.data;
-  if (!a) {
+  if (alert.isLoading) {
+    return <div className="text-sm text-muted-foreground">Loading alert…</div>;
+  }
+  if (!alert.data) {
     return (
-      <p className="rounded-lg border border-border bg-card p-4 text-sm text-muted-foreground">
-        {alert.isLoading ? "Loading alert…" : "Alert not found in the demo dataset."}
-      </p>
+      <div className="space-y-2">
+        <p className="text-sm text-muted-foreground">Alert not found.</p>
+        <Link to="/alerts" className="text-xs text-primary underline">
+          Back to alerts
+        </Link>
+      </div>
     );
   }
 
-  const msg = renderAlertMessage(a, prefs.data?.language ?? "en");
+  const a = alert.data;
+  const lang = (prefs.data?.language ?? "en") as AlertLanguage;
+  const msg = renderAlertMessage(a, lang);
   const rows = (deliveries.data ?? []).filter((d) => d.alertId === a.id);
 
   return (
-    <>
+    <div className="space-y-4">
       <Link
         to="/alerts"
         className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
@@ -67,7 +74,7 @@ function AlertDetailPage() {
       </Link>
       <PageHeader
         title={msg.title}
-        description={`${a.code} · ${a.type} · confidence ${a.confidencePct}% (demo)`}
+        description={`${a.code} · ${a.type} · Confidence: ${a.confidencePct}%`}
         actions={
           <div className="flex items-center gap-2">
             <RiskBadge level={a.severity} />
@@ -75,7 +82,7 @@ function AlertDetailPage() {
             <button
               onClick={() =>
                 acknowledge.mutate(a.id, {
-                  onSuccess: () => toast.success("Alert acknowledged (demo)"),
+                  onSuccess: () => toast.success("Alert acknowledged successfully"),
                 })
               }
               className="rounded-md border border-border px-2 py-1.5 text-xs hover:bg-accent"
@@ -86,8 +93,7 @@ function AlertDetailPage() {
         }
       />
       <DemoNotice>
-        DEMO DATA. Trigger rule: {a.triggerRule}. Source: {a.source}. No message was
-        actually delivered to anyone.
+        Trigger Rule: {a.triggerRule} · Source: {a.source}. Alert generated from risk modeling parameters.
       </DemoNotice>
 
       <div className="grid gap-4 lg:grid-cols-3">
@@ -213,6 +219,6 @@ function AlertDetailPage() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

@@ -14,7 +14,6 @@ import {
   X,
   Radio,
 } from "lucide-react";
-import { DemoBadge } from "@/components/common/DemoBadge";
 
 const NAV = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -49,10 +48,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </div>
             <div className="min-w-0">
               <p className="truncate text-sm font-bold tracking-tight text-foreground leading-none">
-                Sikkim Sentinel
+                Bhurakshak
               </p>
               <p className="truncate text-[10px] text-muted-foreground leading-none mt-0.5">
-                NER Landslide Early Warning · SIH 26001
+                AI-Based Landslide Early Warning System
               </p>
             </div>
           </div>
@@ -70,7 +69,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <Radio className="h-3 w-3" />
               8 NER States
             </span>
-            <DemoBadge label="SIH Demo" />
           </div>
         </div>
       </header>
@@ -134,8 +132,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </div>
 
             <p className="text-[9px] leading-relaxed text-muted-foreground/70 px-1">
-              SIH Problem Statement 26001 · AI-Based Early Warning &amp;
-              Landslide Risk Monitoring System for NER
+              AI-Based Early Warning &amp; Landslide Risk Monitoring System for the North Eastern Region
             </p>
           </div>
         </aside>

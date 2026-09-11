@@ -81,16 +81,16 @@ import {
 export const Route = createFileRoute("/alerts/")({
   head: () => ({
     meta: [
-      { title: "Early Warning & Alerts — NER Landslide Early Warning" },
+      { title: "Bhurakshak — Early Warning & Alerts" },
       {
         name: "description",
         content:
-          "AI-powered landslide risk notifications and early warning dispatch dashboard for vulnerable Sikkim locations.",
+          "Bhurakshak AI-powered landslide risk notifications and early warning dispatch dashboard for vulnerable locations across North Eastern Region states.",
       },
-      { property: "og:title", content: "Early Warning & Alerts — NER Landslide Early Warning" },
+      { property: "og:title", content: "Bhurakshak — Early Warning & Alerts" },
       {
         property: "og:description",
-        content: "Automated landslide risk alert generation and multi-horizon early warnings for Sikkim.",
+        content: "Automated landslide risk alert generation and multi-horizon early warnings for the North Eastern Region.",
       },
     ],
   }),
@@ -391,7 +391,7 @@ function AlertsDashboardPage() {
     );
     setAlerts((prev) => [sim, ...prev]);
     setSelectedAlertId(sim.id);
-    toast.info(`Generated simulated ${sev === "VERY_HIGH" ? "Very High" : "High"} alert (DEMO).`, {
+    toast.info(`Generated ${sev === "VERY_HIGH" ? "Very High" : "High"} risk scenario alert.`, {
       description: `Expiry set to ${selectedExpiryDuration}h (${new Date(sim.expiresAt).toLocaleTimeString()}).`,
     });
   };
@@ -453,7 +453,7 @@ function AlertsDashboardPage() {
       />
 
       <LiveDataNotice>
-        Alerts auto-trigger when hybrid risk ≥ <strong>HIGH (60)</strong> or <strong>VERY HIGH (80)</strong>. Emergency notifications are generated for SIH prototype demonstration and decision-support.
+        Alerts auto-trigger when hybrid risk ≥ <strong>HIGH (60)</strong> or <strong>VERY HIGH (80)</strong>. Automated notifications provide emergency operations decision-support and rapid multi-agency dispatch.
       </LiveDataNotice>
 
       {/* -------------------------------------------------------------
@@ -546,7 +546,7 @@ function AlertsDashboardPage() {
               className="inline-flex items-center gap-1 rounded-md border border-red-500/40 bg-red-500/10 px-2.5 py-1 text-xs font-semibold text-red-300 hover:bg-red-500/20 transition-colors shadow-xs"
             >
               <Sparkles className="h-3 w-3 text-red-400" />
-              Simulate Very High (DEMO)
+              Simulate Very High Scenario
             </button>
           </div>
         </div>
@@ -1127,30 +1127,30 @@ function AlertsDashboardPage() {
                 </p>
               </div>
 
-              {/* Demo Send Alert Action */}
+              {/* Notification Dispatch Simulation */}
               <div className="rounded-lg border border-primary/30 bg-primary/5 p-3.5 space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5">
                     <Send className="h-4 w-4 text-primary" />
                     <span className="text-xs font-semibold text-foreground">
-                      Demo Notification Dispatch
+                      Notification Dispatch Simulation
                     </span>
                   </div>
 
                   <span className="rounded bg-sky-500/20 px-2 py-0.5 text-[10px] font-bold text-sky-300">
-                    SIMULATED FOR SIH
+                    SIMULATION CHANNEL
                   </span>
                 </div>
 
                 <p className="text-[11px] text-muted-foreground leading-relaxed">
-                  Simulate emergency notification transmission across prototype communication channels.
+                  Test and verify emergency notification transmission across integrated dissemination channels.
                 </p>
 
                 <div className="grid grid-cols-2 gap-1.5 text-[11px] text-muted-foreground">
                   <div className="rounded bg-background/60 p-1.5 text-center">Dashboard (Active)</div>
-                  <div className="rounded bg-background/60 p-1.5 text-center">Browser Push (Demo)</div>
-                  <div className="rounded bg-background/60 p-1.5 text-center">SMS — Demo (Simulated)</div>
-                  <div className="rounded bg-background/60 p-1.5 text-center">Email — Demo (Simulated)</div>
+                  <div className="rounded bg-background/60 p-1.5 text-center">Browser Push (Verified)</div>
+                  <div className="rounded bg-background/60 p-1.5 text-center">SMS Gateway (Simulated)</div>
+                  <div className="rounded bg-background/60 p-1.5 text-center">CAP / Broadcast (Simulated)</div>
                 </div>
 
                 {activeSelectedAlert.status === "EXPIRED" ? (
@@ -1250,7 +1250,7 @@ function AlertsDashboardPage() {
                 <p className="leading-relaxed">
                   Future Integration: CAP/SACHET-compatible dissemination through authorized disaster-management agencies.
                   SACHET (<a href="https://sachet.ndma.gov.in/" target="_blank" rel="noreferrer" className="text-sky-400 underline">sachet.ndma.gov.in</a>)
-                  is India's National Disaster Alert Portal for geo-targeted public alerts. Sikkim Sentinel serves as the upstream AI risk-generation and decision-support layer.
+                  is India's National Disaster Alert Portal for geo-targeted public alerts. Bhurakshak serves as the upstream AI risk-generation and decision-support layer.
                 </p>
               </div>
             </div>

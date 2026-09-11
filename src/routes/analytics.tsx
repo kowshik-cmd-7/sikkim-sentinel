@@ -49,13 +49,13 @@ import { NER_STATES, type NERState, type MonitoringRiskPoint } from "@/types";
 export const Route = createFileRoute("/analytics")({
   head: () => ({
     meta: [
-      { title: "System Intelligence & Analytics — NER Landslide Early Warning" },
+      { title: "Bhurakshak — System Intelligence & Analytics" },
       {
         name: "description",
         content:
-          "System-wide risk telemetry, multi-horizon early warning intelligence, and ML feature correlation across 8 North Eastern Region states.",
+          "Bhurakshak system-wide risk telemetry, multi-horizon early warning intelligence, and ML feature correlation across 8 North Eastern Region states.",
       },
-      { property: "og:title", content: "System Intelligence & Analytics — NER Landslide Early Warning" },
+      { property: "og:title", content: "Bhurakshak — System Intelligence & Analytics" },
       {
         property: "og:description",
         content:
@@ -622,7 +622,7 @@ function AnalyticsPage() {
             </p>
           </div>
           <span className="rounded bg-sky-500/10 border border-sky-500/30 px-2 py-0.5 text-[11px] font-mono font-medium text-sky-300">
-            SIH PS 26001 Mandatory Scope
+            Regional Monitoring Scope
           </span>
         </div>
 

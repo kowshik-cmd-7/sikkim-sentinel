@@ -1,7 +1,7 @@
 import { AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export function DemoBadge({ className, label = "DEMO DATA" }: { className?: string; label?: string }) {
+export function DemoBadge({ className, label = "SCENARIO DATA" }: { className?: string; label?: string }) {
   return (
     <span
       className={cn(
