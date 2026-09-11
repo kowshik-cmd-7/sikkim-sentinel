@@ -2,11 +2,16 @@ import os
 import time
 import logging
 from datetime import date, timedelta
+from pathlib import Path
 from typing import Dict, Any, List, Optional, Tuple
 import httpx
 from dotenv import load_dotenv
 
-load_dotenv("backend/.env")
+_backend_env = Path(__file__).resolve().parent / ".env"
+if _backend_env.exists():
+    load_dotenv(dotenv_path=_backend_env)
+else:
+    load_dotenv()
 
 logger = logging.getLogger("landslide_weather_service")
 

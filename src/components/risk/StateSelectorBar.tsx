@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { RefreshCw, AlertCircle } from "lucide-react";
+import { RefreshCw, AlertCircle, Map, CheckCircle2, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NER_STATES } from "@/types";
 
@@ -40,92 +40,93 @@ export function StateSelectorBar({
     ? selectedState
     : "Sikkim";
 
+  const progressPct =
+    calcProgress.total > 0
+      ? Math.round((calcProgress.completed / calcProgress.total) * 100)
+      : 0;
+
   return (
     <div
       className={cn(
-        "rounded-xl border border-border bg-card p-4 shadow-sm space-y-3",
-        className
+        "rounded-lg border border-border bg-card shadow-xs",
+        className,
       )}
     >
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
+        {/* Left: label + selector */}
         <div className="flex flex-wrap items-center gap-3">
-          <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground whitespace-nowrap">
-            Monitoring State / Region
-          </label>
-          <div className="flex flex-wrap items-center gap-2">
-            <select
-              value={activeSelected}
-              onChange={(e) => onStateChange(e.target.value)}
-              className="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-            >
-              {stateOptions.map((st) => (
-                <option key={st} value={st}>
-                  {st}
-                </option>
-              ))}
-            </select>
-
-            {calcStatus === "calculating" && (
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-500/30 bg-sky-500/10 px-2.5 py-1 text-xs text-sky-300">
-                <RefreshCw className="h-3 w-3 animate-spin text-sky-400" />
-                Calculating state risk… ({calcProgress.completed} / {calcProgress.total} assessed)
-              </span>
-            )}
-
-            {calcStatus === "ready" && (
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-xs text-emerald-300">
-                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                Live Calculated Heatmap ({assessedCount} locations assessed)
-              </span>
-            )}
-
-            {isBoundaryError && (
-              <span className="inline-flex items-center gap-1 text-xs text-red-400">
-                <AlertCircle className="h-3.5 w-3.5" />
-                Official boundary service unavailable for {activeSelected}. Check network connection.
-              </span>
-            )}
-          </div>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-4 text-xs">
-          <div>
-            <span className="text-muted-foreground">Selected State: </span>
-            <strong className="text-foreground">{activeSelected}</strong>
-          </div>
-          <div>
-            <span className="text-muted-foreground">Risk Map Status: </span>
-            <span
-              className={cn(
-                "font-medium",
-                calcStatus === "ready"
-                  ? "text-emerald-400"
-                  : calcStatus === "calculating"
-                    ? "text-sky-400"
-                    : "text-amber-400"
-              )}
-            >
-              {calcStatus === "ready"
-                ? "Live / Updated"
-                : calcStatus === "calculating"
-                  ? "Calculating…"
-                  : "Ready"}
+          <div className="flex items-center gap-2">
+            <Map className="h-4 w-4 text-sky-400 shrink-0" />
+            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground whitespace-nowrap">
+              Monitoring State
             </span>
           </div>
-          <button
-            type="button"
-            onClick={onRefresh}
-            disabled={calcStatus === "calculating"}
-            className="inline-flex items-center gap-1 rounded border border-border px-2.5 py-1 text-[11px] text-muted-foreground hover:bg-accent hover:text-foreground transition-colors disabled:opacity-50"
+
+          <select
+            value={activeSelected}
+            onChange={(e) => onStateChange(e.target.value)}
+            className="h-8 rounded-md border border-input bg-background px-3 py-0 text-sm font-semibold text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
           >
-            <RefreshCw className={cn("h-3 w-3", calcStatus === "calculating" && "animate-spin")} />
-            Refresh Risk
-          </button>
+            {stateOptions.map((st) => (
+              <option key={st} value={st}>
+                {st}
+              </option>
+            ))}
+          </select>
         </div>
+
+        {/* Center: status */}
+        <div className="flex flex-wrap items-center gap-2">
+          {calcStatus === "calculating" && (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-500/30 bg-sky-500/10 px-2.5 py-1 text-xs text-sky-300">
+              <Loader2 className="h-3 w-3 animate-spin text-sky-400" />
+              Calculating risk… {calcProgress.completed}/{calcProgress.total} ({progressPct}%)
+            </span>
+          )}
+
+          {calcStatus === "ready" && (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-xs text-emerald-300">
+              <CheckCircle2 className="h-3 w-3 text-emerald-400" />
+              Heatmap live · {assessedCount} locations assessed
+            </span>
+          )}
+
+          {calcStatus === "idle" && (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-border px-2.5 py-1 text-xs text-muted-foreground">
+              <span className="h-2 w-2 rounded-full bg-muted-foreground/60" />
+              Select state to calculate
+            </span>
+          )}
+
+          {isBoundaryError && (
+            <span className="inline-flex items-center gap-1 text-xs text-red-400">
+              <AlertCircle className="h-3.5 w-3.5" />
+              Boundary unavailable — using fallback grid
+            </span>
+          )}
+        </div>
+
+        {/* Right: refresh */}
+        <button
+          type="button"
+          onClick={onRefresh}
+          disabled={calcStatus === "calculating"}
+          className="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-[11px] font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <RefreshCw className={cn("h-3 w-3", calcStatus === "calculating" && "animate-spin")} />
+          Refresh Heatmap
+        </button>
       </div>
-      <p className="text-[11px] text-muted-foreground">
-        Select an Indian state to fetch official BharatMaps administrative boundaries and evaluate a real-time landslide risk grid using Open-Meteo precipitation, Copernicus 90m DEM elevation/slope, and the trained ML model.
-      </p>
+
+      {/* Progress bar during calculation */}
+      {calcStatus === "calculating" && calcProgress.total > 0 && (
+        <div className="h-0.5 bg-muted/40 rounded-b-lg overflow-hidden">
+          <div
+            className="h-full bg-sky-500/70 transition-all duration-300"
+            style={{ width: `${progressPct}%` }}
+          />
+        </div>
+      )}
     </div>
   );
 }

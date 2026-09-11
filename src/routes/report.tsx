@@ -22,8 +22,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 
-import { PageHeader } from "@/components/common/PageHeader";
-import { DemoNotice } from "@/components/common/DemoBadge";
+import { PageHeader, LiveDataNotice } from "@/components/common/PageHeader";
 import { MapPanel } from "@/components/map/MapPanel";
 import { DISTRICTS, SIKKIM_CENTER } from "@/data/sikkim";
 import { extractGpsFromImage, type GpsCoordinates } from "@/utils/exif";
@@ -344,14 +343,18 @@ function FieldReportingPage() {
     <>
       <PageHeader
         title="Field Reporting & Geo-Tagging"
-        description="Operational ground-truth reporting system for ward volunteers, road maintenance squads, and district emergency response teams."
+        description="Ground-truth observation logging for ward volunteers, road maintenance squads, and district emergency response teams across the NER territory."
+        badge={
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-300">
+            <CheckCircle2 className="h-3 w-3" />
+            Field Ops Active
+          </span>
+        }
       />
 
-      <DemoNotice>
-        Geo-tagged observations are saved to your local browser repository and plotted on the interactive
-        sentinel map. You can inspect any report and immediately cross-evaluate it against real Copernicus 90m DEM
-        terrain slopes and trained ML landslide hazard models.
-      </DemoNotice>
+      <LiveDataNotice>
+        Geo-tagged observations are plotted in real time. Each report can be inspected and cross-evaluated against Copernicus 90m DEM terrain slope and trained GradientBoostingRegressor hazard predictions.
+      </LiveDataNotice>
 
       {/* Metrics Row */}
       <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-4">

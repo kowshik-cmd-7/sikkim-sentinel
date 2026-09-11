@@ -37,8 +37,7 @@ import {
   type HorizonRiskAssessment,
 } from "@/services/api";
 
-import { PageHeader } from "@/components/common/PageHeader";
-import { DemoNotice } from "@/components/common/DemoBadge";
+import { PageHeader, LiveDataNotice } from "@/components/common/PageHeader";
 import { RiskBadge } from "@/components/common/RiskBadge";
 import { MapPanel } from "@/components/map/MapPanel";
 
@@ -424,27 +423,28 @@ function AlertsDashboardPage() {
       ------------------------------------------------------------- */}
       <PageHeader
         title="Early Warning & Alerts"
-        description="AI-powered landslide risk notifications for vulnerable locations"
+        description="AI-powered landslide risk dispatch and emergency lifecycle management for NER locations"
+        badge={
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-red-500/30 bg-red-500/10 px-2 py-0.5 text-[10px] font-semibold text-red-300">
+            <span className="h-1.5 w-1.5 rounded-full bg-red-400 animate-pulse" />
+            Emergency Ops
+          </span>
+        }
         actions={
-          <div className="flex flex-wrap items-center gap-2.5">
-            {/* Live Monitoring Indicator */}
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-300">
-              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-              Live Risk Monitoring
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-300">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              Live Monitoring
             </span>
-
-            {/* Field Reports link */}
             <Link
               to="/report"
-              className="flex items-center gap-1 rounded-md border border-border px-2.5 py-1 text-xs text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
+              className="flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
             >
               <FileText className="h-3.5 w-3.5 text-emerald-400" /> Field Reports
             </Link>
-
-            {/* Link to preferences or admin */}
             <Link
               to="/admin/alerts"
-              className="flex items-center gap-1 rounded-md border border-border px-2.5 py-1 text-xs text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
+              className="flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
             >
               <Shield className="h-3.5 w-3.5" /> Rule Admin
             </Link>
@@ -452,10 +452,9 @@ function AlertsDashboardPage() {
         }
       />
 
-      <DemoNotice>
-        Alerts are automatically triggered by the ML model when final hybrid risk reaches <strong>High (≥60%)</strong> or <strong>Very High (≥80%)</strong>.
-        Emergency notifications generated here are for SIH prototype demonstration and decision-support.
-      </DemoNotice>
+      <LiveDataNotice>
+        Alerts auto-trigger when hybrid risk ≥ <strong>HIGH (60)</strong> or <strong>VERY HIGH (80)</strong>. Emergency notifications are generated for SIH prototype demonstration and decision-support.
+      </LiveDataNotice>
 
       {/* -------------------------------------------------------------
           MONITORING STATE SELECTOR & STATUS BAR

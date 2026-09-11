@@ -14,11 +14,34 @@ Continue developing this project in the [Lovable editor](https://lovable.dev/pro
 
 ## Development
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+### 1. Backend Startup (FastAPI + ML Model)
+
+From the project root (`sikkim-sentinel`):
+
+```powershell
+# Activate virtual environment
+.\backend\venv\Scripts\Activate.ps1
+
+# Run Uvicorn from the project root
+python -m uvicorn backend.service:app --reload --host 127.0.0.1 --port 8000
+```
+
+Or run directly in one line without activation:
+```powershell
+.\backend\venv\Scripts\python.exe -m uvicorn backend.service:app --reload --host 127.0.0.1 --port 8000
+```
+
+Verify backend health:
+- `GET http://127.0.0.1:8000/health`
+- Swagger Docs: `http://127.0.0.1:8000/docs`
+
+### 2. Frontend Startup (TanStack Start + React)
+
+In a separate terminal from the project root:
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
+npm install
 npm run dev
 ```
+
+The frontend will run on `http://localhost:8080` (or `http://localhost:5173`) and automatically connect to `http://127.0.0.1:8000`.

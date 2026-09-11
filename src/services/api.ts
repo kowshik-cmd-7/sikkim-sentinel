@@ -59,8 +59,11 @@ export { findNearbyFacilities };
 
 export const API_BASE = "/api/v1";
 
+const envPythonApi = import.meta.env.VITE_PYTHON_API_URL;
 export const PYTHON_API_BASE: string =
-  import.meta.env.VITE_PYTHON_API_URL || "http://127.0.0.1:8000";
+  envPythonApi && !envPythonApi.includes(":8080")
+    ? envPythonApi
+    : "http://127.0.0.1:8000";
 
 const LATENCY = 220;
 

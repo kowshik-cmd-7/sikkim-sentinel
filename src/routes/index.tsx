@@ -237,49 +237,53 @@ function Dashboard() {
   }, [calculatedPoints]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {/* Header */}
       <PageHeader
-        title="North Eastern Region Command Dashboard"
-        description="Operational early-warning command surface for data-driven landslide hazard monitoring across the 8 NER states."
+        title="NER Landslide Command Dashboard"
+        description="Real-time hazard monitoring across 8 North Eastern Region states · AI-Based Early Warning System · SIH 26001"
+        badge={
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-300">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            LIVE
+          </span>
+        }
       />
 
-      {/* SIH End-to-End Operational Pipeline Ribbon (Task 9) */}
-      <div className="rounded-lg border border-border bg-card/60 p-3 shadow-xs">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-            <Layers className="h-3.5 w-3.5 text-sky-400" />
-            End-to-End Early Warning Pipeline:
+      {/* SIH End-to-End Operational Pipeline Ribbon */}
+      <div className="rounded-lg border border-border bg-card/50 px-4 py-2.5 overflow-x-auto">
+        <div className="flex items-center gap-1.5 min-w-max">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-1 shrink-0 mr-2">
+            <Layers className="h-3 w-3 text-sky-400" />
+            Pipeline
           </span>
-          <div className="flex flex-wrap items-center gap-1 text-xs font-semibold">
-            <Link to="/rainfall" className="rounded px-2 py-1 bg-sky-500/10 text-sky-300 border border-sky-500/20 hover:bg-sky-500/20 transition-colors">
-              1. MONITOR (Rainfall)
-            </Link>
-            <span className="text-muted-foreground">→</span>
-            <Link to="/assessment" className="rounded px-2 py-1 bg-blue-500/10 text-blue-300 border border-blue-500/20 hover:bg-blue-500/20 transition-colors">
-              2. ASSESS (Topography)
-            </Link>
-            <span className="text-muted-foreground">→</span>
-            <Link to="/assessment" className="rounded px-2 py-1 bg-purple-500/10 text-purple-300 border border-purple-500/20 hover:bg-purple-500/20 transition-colors">
-              3. PREDICT (ML Model)
-            </Link>
-            <span className="text-muted-foreground">→</span>
-            <Link to="/analytics" className="rounded px-2 py-1 bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 hover:bg-indigo-500/20 transition-colors">
-              4. ANALYZE (System Intelligence)
-            </Link>
-            <span className="text-muted-foreground">→</span>
-            <Link to="/alerts" className="rounded px-2 py-1 bg-red-500/10 text-red-300 border border-red-500/20 hover:bg-red-500/20 transition-colors">
-              5. WARN (Alert Dispatches)
-            </Link>
-            <span className="text-muted-foreground">→</span>
-            <Link to="/report" className="rounded px-2 py-1 bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 hover:bg-emerald-500/20 transition-colors">
-              6. REPORT (Geo-Tagging)
-            </Link>
-            <span className="text-muted-foreground">→</span>
-            <Link to="/historical" className="rounded px-2 py-1 bg-amber-500/10 text-amber-300 border border-amber-500/20 hover:bg-amber-500/20 transition-colors">
-              7. HISTORY (Archive)
-            </Link>
-          </div>
+          <Link to="/rainfall" className="flex items-center gap-1 rounded px-2 py-1 bg-sky-500/10 text-sky-300 border border-sky-500/20 hover:bg-sky-500/20 transition-colors text-[11px] font-semibold whitespace-nowrap">
+            1. MONITOR
+          </Link>
+          <span className="text-muted-foreground text-xs">→</span>
+          <Link to="/assessment" className="flex items-center gap-1 rounded px-2 py-1 bg-blue-500/10 text-blue-300 border border-blue-500/20 hover:bg-blue-500/20 transition-colors text-[11px] font-semibold whitespace-nowrap">
+            2. ASSESS
+          </Link>
+          <span className="text-muted-foreground text-xs">→</span>
+          <Link to="/assessment" className="flex items-center gap-1 rounded px-2 py-1 bg-purple-500/10 text-purple-300 border border-purple-500/20 hover:bg-purple-500/20 transition-colors text-[11px] font-semibold whitespace-nowrap">
+            3. PREDICT
+          </Link>
+          <span className="text-muted-foreground text-xs">→</span>
+          <Link to="/analytics" className="flex items-center gap-1 rounded px-2 py-1 bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 hover:bg-indigo-500/20 transition-colors text-[11px] font-semibold whitespace-nowrap">
+            4. ANALYZE
+          </Link>
+          <span className="text-muted-foreground text-xs">→</span>
+          <Link to="/alerts" className="flex items-center gap-1 rounded px-2 py-1 bg-red-500/10 text-red-300 border border-red-500/20 hover:bg-red-500/20 transition-colors text-[11px] font-semibold whitespace-nowrap">
+            5. WARN
+          </Link>
+          <span className="text-muted-foreground text-xs">→</span>
+          <Link to="/report" className="flex items-center gap-1 rounded px-2 py-1 bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 hover:bg-emerald-500/20 transition-colors text-[11px] font-semibold whitespace-nowrap">
+            6. REPORT
+          </Link>
+          <span className="text-muted-foreground text-xs">→</span>
+          <Link to="/historical" className="flex items-center gap-1 rounded px-2 py-1 bg-amber-500/10 text-amber-300 border border-amber-500/20 hover:bg-amber-500/20 transition-colors text-[11px] font-semibold whitespace-nowrap">
+            7. HISTORY
+          </Link>
         </div>
       </div>
 

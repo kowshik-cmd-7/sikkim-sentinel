@@ -1,10 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { Search } from "lucide-react";
+import { Search, Table2, AlertTriangle } from "lucide-react";
 import { api } from "@/services/api";
 import { PageHeader } from "@/components/common/PageHeader";
-import { DemoNotice } from "@/components/common/DemoBadge";
 import { RiskBadge } from "@/components/common/RiskBadge";
 import { DISTRICTS } from "@/data/sikkim";
 import { formatDate } from "@/utils/risk";
@@ -58,27 +57,38 @@ function HistoricalPage() {
     <>
       <PageHeader
         title="Historical Landslide Events"
-        description="Illustrative archive used to give the prototype realistic spatial and temporal structure."
+        description="Illustrative archive of past landslide events across the monitoring territory to contextualize hazard thresholds."
+        badge={
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold text-amber-300">
+            <Table2 className="h-3 w-3" />
+            Archive
+          </span>
+        }
       />
-      <DemoNotice>
-        These records are fabricated for demonstration. Verify against GSI / state DMD
-        archives before any operational use.
-      </DemoNotice>
 
+      {/* Notice */}
+      <div className="flex items-start gap-2 rounded-md border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-xs text-amber-200/90">
+        <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-400" />
+        <p>
+          Historical events shown are illustrative benchmark records for command center evaluation and model testing.
+        </p>
+      </div>
+
+      {/* Filter controls */}
       <div className="flex flex-wrap items-center gap-3 rounded-lg border border-border bg-card p-3">
-        <div className="flex min-w-56 flex-1 items-center gap-2 rounded-md border border-border bg-background px-2">
-          <Search className="h-4 w-4 text-muted-foreground" />
+        <div className="flex min-w-56 flex-1 items-center gap-2 rounded-md border border-input bg-background px-3 py-2">
+          <Search className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Search location, trigger, notes…"
-            className="w-full bg-transparent py-2 text-sm outline-none"
+            className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground/60"
           />
         </div>
         <select
           value={district}
           onChange={(e) => setDistrict(e.target.value)}
-          className="rounded-md border border-border bg-background px-2 py-2 text-sm"
+          className="h-9 rounded-md border border-input bg-background px-2.5 py-0 text-sm text-foreground"
         >
           <option value="all">All districts</option>
           {DISTRICTS.map((d) => (
@@ -90,18 +100,22 @@ function HistoricalPage() {
         <select
           value={sort}
           onChange={(e) => setSort(e.target.value as SortKey)}
-          className="rounded-md border border-border bg-background px-2 py-2 text-sm"
+          className="h-9 rounded-md border border-input bg-background px-2.5 py-0 text-sm text-foreground"
         >
           <option value="date">Newest first</option>
           <option value="fatalities">Most fatalities</option>
           <option value="district">District A–Z</option>
         </select>
+        <span className="text-xs text-muted-foreground ml-auto">
+          {rows.length} record{rows.length !== 1 ? "s" : ""}
+        </span>
       </div>
 
+      {/* Table */}
       <div className="overflow-x-auto rounded-lg border border-border bg-card">
         <table className="w-full min-w-[820px] text-sm">
-          <thead className="border-b border-border text-left text-xs uppercase tracking-wider text-muted-foreground">
-            <tr>
+          <thead className="border-b border-border text-left">
+            <tr className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               <th className="px-4 py-3">Date</th>
               <th className="px-4 py-3">Location</th>
               <th className="px-4 py-3">District</th>
@@ -113,17 +127,23 @@ function HistoricalPage() {
           </thead>
           <tbody className="divide-y divide-border">
             {rows.map((e) => (
-              <tr key={e.id} className="hover:bg-accent/40">
-                <td className="whitespace-nowrap px-4 py-3 font-mono text-xs">
+              <tr key={e.id} className="hover:bg-accent/30 transition-colors">
+                <td className="whitespace-nowrap px-4 py-3 font-mono text-xs text-muted-foreground">
                   {formatDate(e.date)}
                 </td>
-                <td className="px-4 py-3 font-medium">{e.location}</td>
-                <td className="px-4 py-3 text-muted-foreground">{e.district}</td>
-                <td className="px-4 py-3 capitalize text-muted-foreground">{e.trigger}</td>
+                <td className="px-4 py-3 font-medium text-foreground">{e.location}</td>
+                <td className="px-4 py-3 text-sm text-muted-foreground">{e.district}</td>
+                <td className="px-4 py-3 capitalize text-sm text-muted-foreground">{e.trigger}</td>
                 <td className="px-4 py-3">
                   <RiskBadge level={e.severity} />
                 </td>
-                <td className="px-4 py-3 text-right font-mono">{e.fatalities}</td>
+                <td className="px-4 py-3 text-right font-mono font-semibold text-foreground">
+                  {e.fatalities > 0 ? (
+                    <span className="text-red-400">{e.fatalities}</span>
+                  ) : (
+                    <span className="text-muted-foreground">—</span>
+                  )}
+                </td>
                 <td className="max-w-xs px-4 py-3 text-xs text-muted-foreground">
                   {e.notes}
                 </td>
@@ -131,7 +151,8 @@ function HistoricalPage() {
             ))}
             {rows.length === 0 && (
               <tr>
-                <td colSpan={7} className="px-4 py-8 text-center text-muted-foreground">
+                <td colSpan={7} className="px-4 py-12 text-center text-sm text-muted-foreground">
+                  <Search className="h-6 w-6 mx-auto mb-2 text-muted-foreground/40" />
                   No records match your filters.
                 </td>
               </tr>

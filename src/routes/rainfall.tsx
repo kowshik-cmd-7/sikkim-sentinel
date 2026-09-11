@@ -303,6 +303,12 @@ function RainfallPage() {
       <PageHeader
         title="Rainfall Intelligence & NWP Forecast"
         description="Antecedent accumulation lags and multi-horizon Numerical Weather Prediction for the 8 North Eastern Region (NER) states."
+        badge={
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-500/30 bg-sky-500/10 px-2 py-0.5 text-[10px] font-semibold text-sky-300">
+            <CloudRain className="h-3 w-3 text-sky-400" />
+            NWP Live
+          </span>
+        }
         actions={
           <div className="flex flex-wrap items-center gap-2">
             <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-500/40 bg-sky-500/10 px-3 py-1 text-xs font-semibold text-sky-300">

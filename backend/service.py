@@ -2,6 +2,15 @@
 FastAPI REST Service for Landslide Risk Prediction (Phase 1).
 Exposes /health and /predict endpoints backed by the GradientBoostingRegressor model.
 """
+import sys
+from pathlib import Path
+
+# Ensure project root is in sys.path so 'backend.*' package imports resolve
+# regardless of whether the process is started from project root or inside backend/
+_project_root = str(Path(__file__).resolve().parent.parent)
+if _project_root not in sys.path:
+    sys.path.insert(0, _project_root)
+
 from backend.weather_service import (
     get_current_weather,
     get_hourly_history,

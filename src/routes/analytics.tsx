@@ -370,6 +370,12 @@ function AnalyticsPage() {
       <PageHeader
         title="Regional Landslide Intelligence & Analytics"
         description="Executive risk intelligence, geotechnical correlation, and ML feature dynamics across the 8 North Eastern Region (NER) states."
+        badge={
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-2 py-0.5 text-[10px] font-semibold text-indigo-300">
+            <BarChart3 className="h-3 w-3 text-indigo-400" />
+            Analytics Engine
+          </span>
+        }
         actions={
           <div className="flex flex-wrap items-center gap-2">
             <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-300">

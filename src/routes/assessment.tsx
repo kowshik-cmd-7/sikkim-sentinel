@@ -14,8 +14,7 @@ import {
   type HorizonRiskAssessment,
 } from "@/services/api";
 
-import { PageHeader } from "@/components/common/PageHeader";
-import { DemoNotice } from "@/components/common/DemoBadge";
+import { PageHeader, LiveDataNotice } from "@/components/common/PageHeader";
 import { RiskBadge } from "@/components/common/RiskBadge";
 import { MapPanel } from "@/components/map/MapPanel";
 import { EarlyWarningAlertPanel } from "@/components/assessment/EarlyWarningAlertPanel";
@@ -622,32 +621,37 @@ function AssessmentPage() {
   return (
     <>
       <PageHeader
-        title="Location Assessment"
-        description="Pick a point on the map and retrieve rainfall data to compute current and projected future landslide risk."
+        title="Location Risk Assessment"
+        description="Select a state, pick a point on the map, and retrieve live telemetry to compute current and projected landslide risk."
+        badge={
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-500/30 bg-sky-500/10 px-2 py-0.5 text-[10px] font-semibold text-sky-300">
+            <span className="h-1.5 w-1.5 rounded-full bg-sky-400" />
+            ML Risk Engine
+          </span>
+        }
         actions={
           <div className="flex flex-wrap items-center gap-2">
             <Link
               to="/report"
-              className="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1 text-xs text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
             >
               <FileText className="h-3.5 w-3.5 text-emerald-400" />
               Field Reports
             </Link>
             <Link
               to="/alerts"
-              className="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1 text-xs text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
             >
               <Bell className="h-3.5 w-3.5 text-red-400" />
-              Alerts Dashboard
+              Alert Console
             </Link>
           </div>
         }
       />
 
-      <DemoNotice>
-        Connected to the trained GradientBoostingRegressor risk prediction service. Antecedent rainfall
-        and weather forecasts are retrieved automatically from the Python FastAPI service based on selected coordinates.
-      </DemoNotice>
+      <LiveDataNotice>
+        Connected to live GradientBoostingRegressor risk engine. Rainfall fetched from Open-Meteo · Terrain from Copernicus 90m DEM · Boundaries from BharatMaps.
+      </LiveDataNotice>
 
       {/* -------------------------------------------------------------
           STATE SELECTOR BAR
@@ -1397,73 +1401,84 @@ function AssessmentPage() {
             <div className="rounded-lg border border-border bg-card p-6 flex flex-col items-center justify-center text-center gap-2">
               <Loader2 className="h-5 w-5 animate-spin text-primary" />
               <span className="text-xs text-muted-foreground font-medium">
-                Evaluating current landslide risk...
+                Computing hybrid landslide risk…
               </span>
             </div>
           ) : result ? (
-            <div className="rounded-lg border border-border bg-card p-4">
-              <div className="flex items-center justify-between border-b border-border/50 pb-2 mb-3">
-                <span className="text-xs font-semibold text-primary uppercase tracking-wider">
+            <div
+              className={cn(
+                "rounded-lg border p-4",
+                (result.finalRiskScore ?? 0) >= 80
+                  ? "border-red-500/40 bg-red-500/5"
+                  : (result.finalRiskScore ?? 0) >= 60
+                    ? "border-orange-500/40 bg-orange-500/5"
+                    : (result.finalRiskScore ?? 0) >= 40
+                      ? "border-amber-500/30 bg-amber-500/5"
+                      : "border-emerald-500/30 bg-emerald-500/5",
+              )}
+            >
+              {/* Section heading */}
+              <div className="flex items-center justify-between border-b border-border/50 pb-2.5 mb-3">
+                <span className="text-[10px] font-bold text-foreground uppercase tracking-widest">
                   Current Landslide Risk
                 </span>
-                <span className="text-[10px] text-muted-foreground font-mono">
-                  Hybrid: ML + DEM
+                <span className="text-[10px] text-muted-foreground">
+                  {result.district} · {result.lat.toFixed(4)}°N
                 </span>
               </div>
 
-              <div className="flex items-start justify-between">
+              {/* Dominant score */}
+              <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-xs uppercase tracking-widest text-muted-foreground">
-                    {result.district} ({result.lat.toFixed(4)}, {result.lng.toFixed(4)})
-                  </p>
-
-                  <div className="mt-1">
-                    <span className="text-[10px] font-semibold text-foreground uppercase tracking-wider block">
-                      Final Hybrid Risk
+                  <div className="flex items-baseline gap-2">
+                    <span
+                      className={cn(
+                        "font-mono text-5xl font-bold tabular-nums leading-none",
+                        (result.finalRiskScore ?? 0) >= 80
+                          ? "text-red-400"
+                          : (result.finalRiskScore ?? 0) >= 60
+                            ? "text-orange-400"
+                            : (result.finalRiskScore ?? 0) >= 40
+                              ? "text-amber-400"
+                              : "text-emerald-400",
+                      )}
+                    >
+                      {result.finalRiskScore !== null && result.finalRiskScore !== undefined
+                        ? result.finalRiskScore.toFixed(1)
+                        : "—"}
                     </span>
-                    {result.finalRiskScore !== null && result.finalRiskScore !== undefined ? (
-                      <>
-                        <p className="font-mono text-4xl font-semibold">
-                          {result.finalRiskScore.toFixed(2)}
-                          <span className="text-xl font-normal text-muted-foreground"> / 100</span>
-                        </p>
-                        <p className="text-xs text-muted-foreground">final combined landslide risk score</p>
-                      </>
-                    ) : (
-                      <>
-                        <p className="font-mono text-4xl font-semibold text-muted-foreground">--</p>
-                        <p className="text-xs text-muted-foreground">insufficient data</p>
-                      </>
-                    )}
+                    <span className="text-lg text-muted-foreground font-mono">/100</span>
                   </div>
+                  <p className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                    Final Hybrid Risk Score
+                  </p>
                 </div>
-
-                <RiskBadge level={result.finalRiskLevel ?? result.level} />
+                <RiskBadge
+                  level={result.finalRiskLevel ?? result.level}
+                  className="text-sm px-3 py-1 text-xs"
+                />
               </div>
 
-              {/* Interaction Breakdown Grid */}
-              <div className="mt-4 grid grid-cols-2 gap-2.5 rounded-lg border border-border/60 bg-background/60 p-3">
-                <div>
-                  <span className="text-[10px] uppercase tracking-wider text-muted-foreground block font-medium">
-                    Rainfall ML Risk
-                  </span>
-                  <p className="mt-0.5 font-mono text-lg font-bold text-foreground">
-                    {result.rainfallRiskScore !== null && result.rainfallRiskScore !== undefined
-                      ? `${result.rainfallRiskScore.toFixed(1)} / 100`
-                      : "—"}
-                  </p>
-                  <span className="text-[10px] text-muted-foreground">
-                    Level: {result.rainfallRiskLevel ? result.rainfallRiskLevel.toUpperCase() : "—"}
-                  </span>
+              {/* Breakdown grid */}
+              <div className="mt-4 rounded-md border border-border/50 bg-background/50 divide-y divide-border/50">
+                <div className="flex items-center justify-between px-3 py-2 text-xs">
+                  <span className="text-muted-foreground font-medium">Rainfall ML Risk</span>
+                  <div className="text-right">
+                    <span className="font-mono font-bold text-foreground">
+                      {result.rainfallRiskScore !== null && result.rainfallRiskScore !== undefined
+                        ? `${result.rainfallRiskScore.toFixed(1)} / 100`
+                        : "—"}
+                    </span>
+                    <span className="ml-2 text-[10px] text-muted-foreground uppercase">
+                      {result.rainfallRiskLevel ?? ""}
+                    </span>
+                  </div>
                 </div>
-
-                <div>
-                  <span className="text-[10px] uppercase tracking-wider text-muted-foreground block font-medium">
-                    Terrain Susceptibility
-                  </span>
-                  <p
+                <div className="flex items-center justify-between px-3 py-2 text-xs">
+                  <span className="text-muted-foreground font-medium">Terrain Susceptibility</span>
+                  <span
                     className={cn(
-                      "mt-0.5 text-lg font-bold",
+                      "font-semibold",
                       result.terrainAssessment?.terrain_susceptibility === "Very High"
                         ? "text-red-400"
                         : result.terrainAssessment?.terrain_susceptibility === "High"
@@ -1474,109 +1489,65 @@ function AssessmentPage() {
                     )}
                   >
                     {result.terrainAssessment?.terrain_susceptibility ?? "Unavailable"}
-                  </p>
-                  <span className="text-[10px] text-muted-foreground">
-                    Modifier Score: {result.terrainScore ?? 0} / 100
                   </span>
                 </div>
-
-                <div className="border-t border-border/40 pt-2">
-                  <span className="text-[10px] uppercase tracking-wider text-muted-foreground block font-medium">
-                    Slope
-                  </span>
-                  <p className="mt-0.5 font-mono text-sm font-semibold text-foreground">
+                <div className="flex items-center justify-between px-3 py-2 text-xs">
+                  <span className="text-muted-foreground font-medium">Slope</span>
+                  <span className="font-mono font-semibold text-foreground">
                     {result.terrainAssessment?.slope_degrees !== undefined
                       ? `${result.terrainAssessment.slope_degrees.toFixed(1)}°`
-                      : "—"}{" "}
-                    <span className="text-xs text-muted-foreground font-normal">
+                      : "—"}
+                    <span className="ml-1 text-[10px] font-normal text-muted-foreground">
                       ({result.terrainAssessment?.slope_category ?? "—"})
                     </span>
-                  </p>
-                </div>
-
-                <div className="border-t border-border/40 pt-2">
-                  <span className="text-[10px] uppercase tracking-wider text-muted-foreground block font-medium">
-                    Elevation
                   </span>
-                  <p className="mt-0.5 font-mono text-sm font-semibold text-foreground">
+                </div>
+                <div className="flex items-center justify-between px-3 py-2 text-xs">
+                  <span className="text-muted-foreground font-medium">Elevation</span>
+                  <span className="font-mono font-semibold text-foreground">
                     {result.terrainAssessment?.elevation_m !== undefined
                       ? `${Math.round(result.terrainAssessment.elevation_m).toLocaleString()} m`
                       : "—"}
-                  </p>
+                  </span>
                 </div>
               </div>
-
-              {/* Required Explanation */}
-              <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground bg-accent/30 rounded p-2.5 border border-border/30">
-                Final risk combines rainfall-driven ML risk with terrain susceptibility at the selected location.
-              </p>
 
               {/* Warning if terrain data unavailable */}
               {!result.terrainAssessment && (
                 <div className="mt-3 flex items-center gap-2 rounded border border-yellow-500/40 bg-yellow-500/10 p-2 text-xs text-yellow-300">
                   <AlertCircle className="h-4 w-4 shrink-0" />
-                  <span>Terrain data unavailable: final hybrid risk marked as Insufficient Data.</span>
+                  <span>Terrain data unavailable — hybrid risk marked as Insufficient Data.</span>
                 </div>
               )}
 
               {/* Feature importance */}
-              <div className="mt-4 space-y-3">
-                <div className="flex items-center justify-between border-b border-border pb-1 text-xs font-medium text-muted-foreground">
-                  <span>Rainfall ML feature importance (GradientBoostingRegressor)</span>
-                  <span>Contribution</span>
-                </div>
-
+              <div className="mt-4 space-y-2">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground border-b border-border/50 pb-1.5">
+                  ML Feature Importance (GBR)
+                </p>
                 {result.factors.map((factor: AssessmentFactor) => (
                   <div key={factor.label}>
-                    <div className="flex justify-between text-xs">
-                      <span className="truncate pr-2">{factor.label}</span>
-
-                      <span className="shrink-0 text-muted-foreground">
+                    <div className="flex justify-between text-[11px] mb-1">
+                      <span className="text-foreground truncate pr-2">{factor.label}</span>
+                      <span className="shrink-0 text-muted-foreground tabular-nums">
                         {factor.value !== null && factor.value !== undefined
-                          ? `${factor.value.toFixed(2)} mm`
+                          ? `${factor.value.toFixed(1)}mm`
                           : "—"}{" "}
-                        · {factor.importancePct}%
+                        · <strong className="text-foreground">{factor.importancePct}%</strong>
                       </span>
                     </div>
-
-                    <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-muted">
+                    <div className="h-1 overflow-hidden rounded-full bg-muted">
                       <div
-                        className="h-full rounded-full bg-sky-400"
-                        style={{
-                          width: `${Math.min(100, factor.importancePct)}%`,
-                        }}
+                        className="h-full rounded-full bg-sky-500/70"
+                        style={{ width: `${Math.min(100, factor.importancePct)}%` }}
                       />
                     </div>
                   </div>
                 ))}
               </div>
 
-              {/* Rainfall values used */}
-              {result.rainfallInputs && (
-                <div className="mt-4 rounded-md border border-border bg-background/60 p-3">
-                  <div className="flex items-center justify-between">
-                    <p className="text-xs font-medium">Rainfall used by model</p>
-                    <span className="text-[10px] text-muted-foreground">
-                      {isManualOverride
-                        ? activePresetName
-                          ? `Preset: ${activePresetName}`
-                          : "Manual Input"
-                        : result.rainfallSource ?? "Live Weather API"}
-                    </span>
-                  </div>
-
-                  <div className="mt-2 grid grid-cols-2 gap-2 text-xs text-muted-foreground sm:grid-cols-3">
-                    <span>1d: {result.rainfallInputs.rainfall_1d ?? "—"} mm</span>
-                    <span>3d: {result.rainfallInputs.rainfall_3d ?? "—"} mm</span>
-                    <span>7d: {result.rainfallInputs.rainfall_7d ?? "—"} mm</span>
-                    <span>14d: {result.rainfallInputs.rainfall_14d ?? "—"} mm</span>
-                    <span>30d: {result.rainfallInputs.rainfall_30d ?? "—"} mm</span>
-                  </div>
-                </div>
-              )}
-
               {/* Recommendation */}
-              <p className="mt-4 rounded-md border border-border bg-background/60 p-3 text-xs text-muted-foreground">
+              <p className="mt-4 rounded-md border border-border/50 bg-background/50 px-3 py-2 text-xs text-muted-foreground leading-relaxed">
                 {result.recommendation}
               </p>
             </div>
